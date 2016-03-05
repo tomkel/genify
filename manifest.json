@@ -1,0 +1,12 @@
+{
+  "name": "genify",
+  "description": "Build spotify playlists from saved music based on their type and genre.",
+  "version": "1.0",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "icons": { "16": "genify-16.png", "128": "genify-128.png" }
+}
