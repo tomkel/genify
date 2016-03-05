@@ -4,9 +4,12 @@
   "version": "1.0",
   "manifest_version": 2,
   "app": {
-    "background": {
-      "scripts": ["background.js"]
+    "urls": [
+      "http://mysubdomain.example.com/"
+    ],
+    "launch": {
+      "web_url": "http://mysubdomain.example.com/"
     }
   },
-  "icons": { "16": "genify-16.png", "128": "genify-128.png" }
+  "icons": { "16": "icon-16.png", "128": "icon-128.png" }
 }
