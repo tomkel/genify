@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/tomkel/genify/issues"
   },
-  "homepage": "https://github.com/tomkel/genify#readme"
+  "homepage": "https://github.com/tomkel/genify#readme",
+  "devDependencies": {
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.6.1"
+  }
 }
