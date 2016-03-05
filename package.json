@@ -2,7 +2,7 @@
   "name": "genify",
   "version": "1.0.0",
   "description": "Build spotify playlists from saved music based on their type and genre.",
-  "main": "index.js",
+  "main": "app/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,6 +23,7 @@
     "browserify": "^13.0.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.6.1"
+    "babel-polyfill": "^6.6.1",
+    "got": "^6.2.0"
   }
 }
