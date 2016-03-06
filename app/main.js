@@ -78,45 +78,44 @@ function collectTracks() {
 }
 
 /**
- * returns a promise with albumMap parameter
+ * returns a promise with artistMap parameter
  *  tracks
  *  genres
  */
 function organizeTracks() {
-  console.log(tracksArr);
-  const albumIDs = new Set();
-  const albumMap = new Map();
+  const artistIDs = new Set();
+  const artistMap = new Map();
   tracksArr.forEach(c => {
-    albumIDs.add(c.track.album.id);
-    if (albumMap.has(c.track.album.id)) {
-      albumMap.get(c.track.album.id).tracks.push(c.track.id);
+    artistIDs.add(c.track.artists[0].id);
+    if (artistMap.has(c.track.artists[0].id)) {
+      artistMap.get(c.track.artists[0].id).tracks.push(c.track.id);
     } else {
-      albumMap.set(c.track.album.id, {tracks: [c.track.id]});
+      artistMap.set(c.track.artists[0].id, {tracks: [c.track.id], genres: []});
     }
   });
-  return getGenres(albumIDs).then(responses => {
+  return getGenres(artistIDs).then(responses => {
+    let populated = 0;
     responses.forEach(r => {
       r = JSON.parse(r.body);
-      r.albums.forEach(c => {
+      r.artists.forEach(c => {
         //NOTE: c.genres is empty on all entries!!!
-        console.log(c);
-        albumMap.get(c.id).genres = c.genres;
+        if (c.genres.length) populated++;
+        artistMap.get(c.id).genres = c.genres;
       });
     });
-    console.log(albumMap);
-    return Promise.resolve(albumMap);
+    console.log(populated, '/', artistIDs.size);
+    return Promise.resolve(artistMap);
   });
 }
 
-function getGenres(albums) {
-  const albumsURL = 'https://api.spotify.com/v1/albums';
-  const albumsArr = Array.from(albums);
-  console.log(albumsArr.length, 'albums');
+function getGenres(artists) {
+  const artistsURL = 'https://api.spotify.com/v1/artists';
+  const artistsArr = Array.from(artists);
   const promises = [];
-  for (let i = 0; i < albumsArr.length; i += 20) {
-    promises.push(got(albumsURL,
+  for (let i = 0; i < artistsArr.length; i += 50) {
+    promises.push(got(artistsURL,
                       {headers: {'Authorization': 'Bearer ' + accessToken},
-                       query: {ids: albumsArr.slice(i, i+20).join()}}));
+                       query: {ids: artistsArr.slice(i, i+50).join()}}));
   }
   return Promise.all(promises);
 }
@@ -125,7 +124,6 @@ let playlists = new Map();
 function createPlaylists(map) {
   console.log(map);
   map.forEach(v => {
-    console.log(v);
     try {
       v.genres.forEach(g => {
         v.tracks.forEach(t => {
