@@ -93,7 +93,8 @@ function organizeTracks() {
       artistMap.set(c.track.artists[0].id, { tracks: [c.track.id], genres: [] })
     }
   })
-  return getGenres(artistIDs).then(responses => {
+  const promises = []
+  promises.push(getGenres(artistIDs).then(responses => {
     let populated = 0
     responses.forEach(r => {
       r.artists.forEach(c => {
@@ -104,27 +105,62 @@ function organizeTracks() {
     })
     console.log(populated, '/', artistIDs.size)
     return Promise.resolve(artistMap)
-  })
+  }))
+  promises.push(getTerms(artistIDs).then(rArr => {
+    let populated = 0
+    rArr.forEach(r => {
+      populated++
+      console.log(r.id())
+      artistMap.get(r.id()).terms = r.response.terms
+    })
+    console.log(populated, '/', artistIDs.size)
+    return Promise.resolve(artistMap)
+  }))
+  return Promise.all(promises)
 }
 
 function getGenres(artists) {
   const artistsURL = 'https://api.spotify.com/v1/artists'
   const artistsArr = Array.from(artists)
   const promises = []
+
+  const headers = new Headers()
+  headers.set('Authorization', `Bearer ${accessToken}`)
+
   for (let i = 0; i < artistsArr.length; i += 50) {
-    const headers = new Headers()
-    headers.set('Authorization', `Bearer ${accessToken}`)
     const qs = querystring.stringify({ ids: artistsArr.slice(i, i + 50).join() })
     promises.push(fetch(`${artistsURL}?${qs}`, { headers }).then(r => r.json()))
   }
   return Promise.all(promises)
 }
 
+function getTerms(artists) {
+  const termsURL = 'http://developer.echonest.com/api/v4/artist/terms'
+  const ECHONEST_API_KEY = process.env.ECHONEST_API_KEY
+  const artistsArr = Array.from(artists).splice(0, 5)
+  const promises = []
+
+  artistsArr.forEach(a => {
+    const qs = querystring.stringify({
+      api_key: ECHONEST_API_KEY,
+      id: `spotify:artist:${a}`,
+    })
+    promises.push(fetch(`${termsURL}?${qs}`).then(r => r.json()).then(r => {
+      const r2 = r
+      // enclose a
+      r2.id = (retVal => () => retVal)(a)
+      return Promise.resolve(r2)
+    }))
+  })
+  return Promise.all(promises)
+}
+
 let playlists = new Map()
 function createPlaylists(map) {
   console.log(map)
-  map.forEach(v => {
+  map[0].forEach(v => {
     try {
+      // organize by genre
       v.genres.forEach(g => {
         v.tracks.forEach(t => {
           if (playlists.has(g)) {
@@ -134,8 +170,21 @@ function createPlaylists(map) {
           }
         })
       })
+      // organize by terms
+      if (v.terms && v.terms.length) {
+        const term = v.terms[0].name
+        v.tracks.forEach(t => {
+          if (playlists.has(term)) {
+            playlists.get(term).push(t)
+          } else {
+            playlists.set(term, [t])
+          }
+        })
+        console.log(term)
+      }
     } catch (e) {
-      console.log('failed on', v)
+      console.error(e)
+      console.error('failed on', v)
     }
   })
   console.log(playlists)
