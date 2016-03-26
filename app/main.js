@@ -1,40 +1,10 @@
-'use strict'
-
 require('babel-polyfill')
 const crypto = require('crypto')
 const querystring = require('querystring')
 require('isomorphic-fetch')
 
 
-// remove leading # from urlHash
-let urlHash = window.location.hash
-if (urlHash.charAt(0) === '#') urlHash = urlHash.substr(1)
-urlHash = querystring.parse(urlHash)
-
-if ('state' in urlHash) {
-  // check if state matches dom storage
-
-  /**
-   * success params:
-   *  access_token
-   *  token_type
-   *  expires_in
-   *  state
-   */
-  for (let param in urlHash) {
-    window.localStorage.setItem(param, urlHash[param])
-  }
-  /**
-   * fail params:
-   *  error
-   *  state
-   */
-} else {
-
-}
-
-
-const accessToken = window.localStorage.getItem('access_token')
+const accessToken
 if (accessToken) {
   console.log(' we have an access token ')
   console.log('getting user\'s saved tracks')
@@ -201,11 +171,6 @@ const authParams = {
   scope: 'playlist-modify-public user-library-read',
   // show_dialog
 }
-
-const authButton = document.getElementById('auth')
-authButton.addEventListener('click', () => {
-  window.location.assign(`${authURL}?${querystring.stringify(authParams)}`)
-})
 
 //got(authURL, {query: authParams}).then(response => {
 //  console.log(response.body)
