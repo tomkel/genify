@@ -9,3 +9,8 @@ heavily rate limited that it is not possible to have all users using the same AP
 You can register for these API keys
 [here](https://developer.echonest.com/account/register) and
 [here](https://developer.spotify.com/my-applications/#!/applications).
+
+Start the program with
+```js
+npm start
+```
