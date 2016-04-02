@@ -3,13 +3,14 @@ const crypto = require('crypto')
 const querystring = require('querystring')
 require('isomorphic-fetch')
 
-
-const accessToken
-if (accessToken) {
-  console.log(' we have an access token ')
-  console.log('getting user\'s saved tracks')
-  collectTracks().then(organizeTracks).then(createPlaylists)
-}
+let accessToken
+;(() => {
+  if (accessToken) {
+    console.log(' we have an access token ')
+    console.log('getting user\'s saved tracks')
+    collectTracks().then(organizeTracks).then(createPlaylists)
+  }
+})()
 
 // returns a Promise
 function getTracks(offset) {
@@ -23,14 +24,13 @@ function getTracks(offset) {
 let tracksArr = []
 // takes an HTTP response, returns total number of tracks
 function storeTracks(response) {
-  tracksArr =  tracksArr.concat(response.items)
+  tracksArr = tracksArr.concat(response.items)
   return response.total
 }
 
 function collectTracks() {
   return getTracks(0).then(r => {
-    let totalTracks = storeTracks(r)
-    let offset = 50
+    const totalTracks = storeTracks(r)
     const promises = []
     for (let offset = 50; offset < totalTracks; offset += 50) {
       promises.push(getTracks(offset))
@@ -125,7 +125,7 @@ function getTerms(artists) {
   return Promise.all(promises)
 }
 
-let playlists = new Map()
+const playlists = new Map()
 function createPlaylists(map) {
   console.log(map)
   map[0].forEach(v => {
