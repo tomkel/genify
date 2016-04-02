@@ -164,7 +164,7 @@ function createPlaylists(map) {
 const authURL = 'https://accounts.spotify.com/authorize'
 const stateString = crypto.randomBytes(64).toString('hex')
 const authParams = {
-  client_id: process.env.CLIENT_ID,
+  client_id: process.env.SPOTIFY_CLIENT_ID,
   response_type: 'token',
   redirect_uri: 'http://localhost:8080',
   state: stateString,
