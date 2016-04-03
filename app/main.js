@@ -1,13 +1,23 @@
-require('babel-polyfill')
+'use strict'
 const crypto = require('crypto')
 const querystring = require('querystring')
 require('isomorphic-fetch')
+const winston = require('winston')
+
+const log = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      colorize: true,
+      timestamp: true,
+    }),
+  ],
+})
 
 let accessToken
 ;(() => {
   if (accessToken) {
-    console.log(' we have an access token ')
-    console.log('getting user\'s saved tracks')
+    log.info(' we have an access token ')
+    log.info('getting user\'s saved tracks')
     collectTracks().then(organizeTracks).then(createPlaylists)
   }
 })()
@@ -73,17 +83,17 @@ function organizeTracks() {
         artistMap.get(c.id).genres = c.genres
       })
     })
-    console.log(populated, '/', artistIDs.size)
+    log.debug(populated, '/', artistIDs.size)
     return Promise.resolve(artistMap)
   }))
   promises.push(getTerms(artistIDs).then(rArr => {
     let populated = 0
     rArr.forEach(r => {
       populated++
-      console.log(r.id())
+      log.debug(r.id())
       artistMap.get(r.id()).terms = r.response.terms
     })
-    console.log(populated, '/', artistIDs.size)
+    log.debug(populated, '/', artistIDs.size)
     return Promise.resolve(artistMap)
   }))
   return Promise.all(promises)
@@ -127,7 +137,7 @@ function getTerms(artists) {
 
 const playlists = new Map()
 function createPlaylists(map) {
-  console.log(map)
+  log.debug(map)
   map[0].forEach(v => {
     try {
       // organize by genre
@@ -150,14 +160,14 @@ function createPlaylists(map) {
             playlists.set(term, [t])
           }
         })
-        console.log(term)
+        log.debug(term)
       }
     } catch (e) {
-      console.error(e)
-      console.error('failed on', v)
+      log.error(e)
+      log.error('failed on', v)
     }
   })
-  console.log(playlists)
+  log.info(playlists)
 }
 
 
