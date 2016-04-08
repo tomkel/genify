@@ -1,4 +1,6 @@
 'use strict'
+const http = require('http')
+const url = require('url')
 const crypto = require('crypto')
 const querystring = require('querystring')
 require('isomorphic-fetch')
@@ -21,6 +23,38 @@ let accessToken
     collectTracks().then(organizeTracks).then(createPlaylists)
   }
 })()
+
+function getAuthURL() {
+  const authURL = 'https://accounts.spotify.com/authorize'
+  // const stateString = crypto.randomBytes(64).toString('hex')
+  const authParams = {
+    client_id: process.env.SPOTIFY_CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: 'http://localhost:8080',
+    // state: stateString,
+    scope: 'playlist-modify-public user-library-read',
+  }
+  return `${authURL}?${querystring.stringify(authParams)}`
+}
+
+function server() {
+  http.createServer((req, res) => {
+    const urlObj = url.parse(req.url, true)
+    log.info(urlObj)
+    if (urlObj.query) {
+      res.end()
+      urlObj.query.code
+
+    } else {
+      const html = `<!DOCTYPE html>
+        <button onclick="document.location.assign('${getAuthURL()}')">
+          Click to Authorize
+        </button>`
+      res.end(html)
+    }
+  }).listen(8080)
+}
+server()
 
 // returns a Promise
 function getTracks(offset) {
@@ -169,21 +203,3 @@ function createPlaylists(map) {
   })
   log.info(playlists)
 }
-
-
-const authURL = 'https://accounts.spotify.com/authorize'
-const stateString = crypto.randomBytes(64).toString('hex')
-const authParams = {
-  client_id: process.env.SPOTIFY_CLIENT_ID,
-  response_type: 'token',
-  redirect_uri: 'http://localhost:8080',
-  state: stateString,
-  scope: 'playlist-modify-public user-library-read',
-  // show_dialog
-}
-
-//got(authURL, {query: authParams}).then(response => {
-//  console.log(response.body)
-//}).catch(e => {
-//  console.error(e)
-//})
