@@ -38,27 +38,29 @@ function getAuthURL() {
 }
 
 function getRefreshAndAccessTokens(authCode) {
-  const url = 'https://accounts.spotify.com/api/token'
+  const tokenUrl = 'https://accounts.spotify.com/api/token'
   const params = {
     grant_type: 'authorization_code',
     code: authCode,
-    redirect_uri: 'http://localhost:8080'
+    redirect_uri: 'http://localhost:8080',
   }
-  const headers = new Headers({ 
-    Authorization: new Buffer(`Basic ${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')
+  const base64Auth = new Buffer(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')
+  const headers = new Headers({
+    Authorization: `Basic ${base64Auth}`,
+    'Content-Type': 'application/x-www-form-urlencoded',
   })
+  log.debug(headers)
 
-  fetch(`${url}?${querystring.stringify(params)}`, { method: 'POST', headers }).then(r => {
-    return r.text()
-  }).then(text => {
-    log.info(text)
+  fetch(tokenUrl, { method: 'POST', headers, body: querystring.stringify(params) }).then(r => {
+    return r.json()
+  }).then(json => {
+    log.info(json)
   })
-
 }
 
 function authFlow(req, res) {
   const urlObj = url.parse(req.url, true)
-  log.info(urlObj)
+  log.debug(urlObj)
   if (urlObj.query.error) {
     res.end()
     log.error(urlObj.query.error)
@@ -66,7 +68,7 @@ function authFlow(req, res) {
   }
   if (urlObj.query.code) {
     res.end()
-
+    log.info(`got auth code: ${urlObj.query.code}`)
     getRefreshAndAccessTokens(urlObj.query.code)
   } else {
     const html = `<!DOCTYPE html>
