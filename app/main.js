@@ -16,12 +16,9 @@ const log = new (winston.Logger)({
 })
 
 let accessToken
+let refreshToken
 ;(() => {
-  if (accessToken) {
-    log.info(' we have an access token ')
-    log.info('getting user\'s saved tracks')
-    collectTracks().then(organizeTracks).then(createPlaylists)
-  }
+  http.createServer(authFlow).listen(8080)
 })()
 
 function getAuthURL() {
@@ -51,11 +48,8 @@ function getRefreshAndAccessTokens(authCode) {
   })
   log.debug(headers)
 
-  fetch(tokenUrl, { method: 'POST', headers, body: querystring.stringify(params) }).then(r => {
-    return r.json()
-  }).then(json => {
-    log.info(json)
-  })
+  return fetch(tokenUrl, { method: 'POST', headers, body: querystring.stringify(params) })
+      .then(r => r.json())
 }
 
 function authFlow(req, res) {
@@ -69,7 +63,15 @@ function authFlow(req, res) {
   if (urlObj.query.code) {
     res.end()
     log.info(`got auth code: ${urlObj.query.code}`)
-    getRefreshAndAccessTokens(urlObj.query.code)
+    getRefreshAndAccessTokens(urlObj.query.code).then(r => {
+      if (r.access_token) {
+        accessToken = r.access_token
+        refreshToken = r.refresh_token
+        log.info(' we have an access token ')
+        log.info('getting your saved tracks')
+        collectTracks().then(organizeTracks).then(createPlaylists)
+      }
+    })
   } else {
     const html = `<!DOCTYPE html>
       <button onclick="document.location.assign('${getAuthURL()}')">
@@ -78,11 +80,6 @@ function authFlow(req, res) {
     res.end(html)
   }
 }
-
-function server() {
-  http.createServer(authFlow).listen(8080)
-}
-server()
 
 // returns a Promise
 function getTracks(offset) {
