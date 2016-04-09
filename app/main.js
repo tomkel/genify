@@ -37,22 +37,48 @@ function getAuthURL() {
   return `${authURL}?${querystring.stringify(authParams)}`
 }
 
-function server() {
-  http.createServer((req, res) => {
-    const urlObj = url.parse(req.url, true)
-    log.info(urlObj)
-    if (urlObj.query) {
-      res.end()
-      urlObj.query.code
+function getRefreshAndAccessTokens(authCode) {
+  const url = 'https://accounts.spotify.com/api/token'
+  const params = {
+    grant_type: 'authorization_code',
+    code: authCode,
+    redirect_uri: 'http://localhost:8080'
+  }
+  const headers = new Headers({ 
+    Authorization: new Buffer(`Basic ${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')
+  })
 
-    } else {
-      const html = `<!DOCTYPE html>
-        <button onclick="document.location.assign('${getAuthURL()}')">
-          Click to Authorize
-        </button>`
-      res.end(html)
-    }
-  }).listen(8080)
+  fetch(`${url}?${querystring.stringify(params)}`, { method: 'POST', headers }).then(r => {
+    return r.text()
+  }).then(text => {
+    log.info(text)
+  })
+
+}
+
+function authFlow(req, res) {
+  const urlObj = url.parse(req.url, true)
+  log.info(urlObj)
+  if (urlObj.query.error) {
+    res.end()
+    log.error(urlObj.query.error)
+    return
+  }
+  if (urlObj.query.code) {
+    res.end()
+
+    getRefreshAndAccessTokens(urlObj.query.code)
+  } else {
+    const html = `<!DOCTYPE html>
+      <button onclick="document.location.assign('${getAuthURL()}')">
+        Click to Authorize
+      </button>`
+    res.end(html)
+  }
+}
+
+function server() {
+  http.createServer(authFlow).listen(8080)
 }
 server()
 
