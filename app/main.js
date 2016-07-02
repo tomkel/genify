@@ -7,8 +7,8 @@ const log = require('./log')
 const auth = require('./auth')
 const playlist = require('./playlist')
 
-if (!process.env.SPOTIFY_CLIENT_ID) {
-  log.error('Set environment variable SPOTIFY_CLIENT_ID')
+if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+  log.error('Set environment variables specified in README.')
   process.exit(1)
 }
 
