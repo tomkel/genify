@@ -15,7 +15,7 @@ function getAuthURL() {
   return `${authURL}?${querystring.stringify(authParams)}`
 }
 
-function getRefreshAndAccessTokens(authCode) {
+function getTokens(authCode) {
   const tokenUrl = 'https://accounts.spotify.com/api/token'
   const params = {
     grant_type: 'authorization_code',
@@ -37,20 +37,17 @@ function getRefreshAndAccessTokens(authCode) {
     .then(r => r.json())
 }
 
-// handler for the http server
 function authCodeFlow(authCode) {
-  return getRefreshAndAccessTokens(authCode).then(r =>
-    new Promise((resolve, reject) => {
-      if (r.access_token) {
-        tokens.access = r.access_token
-        tokens.refresh = r.refresh_token
-        log.info(' we have an access token ')
-        log.info('getting your saved tracks')
-        resolve({ accessToken: r.access_token, refreshToken: r.refresh_token })
-      }
-      reject('Failed to get access token')
-    })
-  )
+  return getTokens(authCode).then(r => {
+    if (r.access_token) {
+      tokens.access = r.access_token
+      tokens.refresh = r.refresh_token
+      log.info('we have an access token')
+      log.info(tokens)
+      return { accessToken: r.access_token, refreshToken: r.refresh_token }
+    }
+    return Promise.reject('Failed to get access token')
+  })
 }
 
 exports.url = getAuthURL()
