@@ -3,13 +3,22 @@ const log = require('./log')
 const tokens = require('./tokens')
 
 let tracksArr = []
+const tracksMap = new Map()
+
 const artistIDs = new Set()
 // key: artist ID
 // value: { tracks: [track IDs],
 //          genres: [genres] }
 const artistMap = new Map()
 
+const albumsIDs = new Set()
+// key: album ID
+// value: { tracks: [track IDs],
+//          genres: [genres] }
+const albumsMap = new Set()
+
 // returns a Promise
+// result array is in an items property
 function fetchTracks(offset) {
   const tracksURL = 'https://api.spotify.com/v1/me/tracks'
   const headers = new Headers()
@@ -18,10 +27,40 @@ function fetchTracks(offset) {
   return fetch(`${tracksURL}?${qs}`, { headers }).then(r => r.json())
 }
 
-// takes an HTTP response, returns total number of tracks
+// maximum 50 IDs
+// result array is in an artists property
+function fetchArtists(artistIDs) {
+  const headers = new Headers()
+  headers.set('Authorization', `Bearer ${tokens.access}`)
+
+  let url = 'https://api.spotify.com/v1/artists?ids='
+  for (const ID of artistIDs) {
+    url += `${ID},`
+  }
+  url = url.slice(0, -1) // remove trailing comma
+
+  return fetch(url, { headers }).then(r => r.json())
+}
+
+// maximum 20 IDs
+// result array is in an albums property
+function fetchAlbums(albumIDs) {
+  const headers = new Headers()
+  headers.set('Authorization', `Bearer ${tokens.access}`)
+
+  let url = 'https://api.spotify.com/v1/albums?ids='
+  for (const ID of albumIDs) {
+    url += `${ID},`
+  }
+  url = url.slice(0, -1) // remove trailing comma
+
+  return fetch(url, { headers }).then(r => r.json())
+}
+
+
+// takes an HTTP response
 function store(response) {
   tracksArr = tracksArr.concat(response.items)
-  return response.total
 }
 
 function getTerms(artists) {
@@ -74,22 +113,20 @@ function organize() {
 }
 
 function collect() {
-  return fetchTracks(0).then(r => {
-    const totalTracks = store(r)
+  return fetchTracks(0).then(res => {
+    store(res)
+    const totalTracks = res.total
     log.info(`Total Tracks: ${totalTracks}`)
 
     const promises = []
     for (let offset = 50; offset < totalTracks; offset += 50) {
-      promises.push(fetchTracks(offset)
-        .then(store)
+      promises.push(
+        fetchTracks(offset).then(store)
       )
     }
 
     return Promise.all(promises).then(() =>
-      new Promise((resolve) => {
-        log.info('Got all tracks')
-        resolve()
-      })
+      log.info('Got all tracks')
     )
   })
 }
