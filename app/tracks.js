@@ -1,9 +1,9 @@
 const querystring = require('querystring')
+
 const log = require('./log')
 const tokens = require('./tokens')
 
 let tracksArr = []
-const tracksMap = new Map()
 
 const artistIDs = new Set()
 // key: artist ID
@@ -11,11 +11,11 @@ const artistIDs = new Set()
 //          genres: [genres] }
 const artistMap = new Map()
 
-const albumsIDs = new Set()
+const albumIDs = new Set()
 // key: album ID
 // value: { tracks: [track IDs],
 //          genres: [genres] }
-const albumsMap = new Set()
+const albumMap = new Map()
 
 // returns a Promise
 // result array is in an items property
@@ -29,12 +29,12 @@ function fetchTracks(offset) {
 
 // maximum 50 IDs
 // result array is in an artists property
-function fetchArtists(artistIDs) {
+function fetchArtists(IDs) {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${tokens.access}`)
 
   let url = 'https://api.spotify.com/v1/artists?ids='
-  for (const ID of artistIDs) {
+  for (const ID of IDs) {
     url += `${ID},`
   }
   url = url.slice(0, -1) // remove trailing comma
@@ -44,12 +44,12 @@ function fetchArtists(artistIDs) {
 
 // maximum 20 IDs
 // result array is in an albums property
-function fetchAlbums(albumIDs) {
+function fetchAlbums(IDs) {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${tokens.access}`)
 
   let url = 'https://api.spotify.com/v1/albums?ids='
-  for (const ID of albumIDs) {
+  for (const ID of IDs) {
     url += `${ID},`
   }
   url = url.slice(0, -1) // remove trailing comma
@@ -63,33 +63,24 @@ function store(response) {
   tracksArr = tracksArr.concat(response.items)
 }
 
-function getTerms(artists) {
-  const termsURL = 'http://developer.echonest.com/api/v4/artist/terms'
-  const ECHONEST_API_KEY = process.env.ECHONEST_API_KEY
-  const artistsArr = Array.from(artists).splice(0, 5)
-  const promises = []
-
-  artistsArr.forEach(a => {
-    const qs = querystring.stringify({
-      api_key: ECHONEST_API_KEY,
-      id: `spotify:artist:${a}`,
-    })
-    promises.push(fetch(`${termsURL}?${qs}`).then(r => r.json()).then(r => {
-      const r2 = r
-      // enclose a
-      r2.id = (retVal => () => retVal)(a)
-      return Promise.resolve(r2)
-    }))
-  })
-  return Promise.all(promises)
-}
-
 /**
  * returns a promise with artistMap parameter
  *  tracks
  *  genres
  */
-function organize() {
+function mapArtists() {
+  let populated = 0
+
+  function mapArtistGenres(res) {
+    res.artists.forEach(artistObj => {
+      if (artistObj.genres.length) {
+        artistMap.get(artistObj.id).genres =
+            artistMap.get(artistObj.id).genres.concat(artistObj.genres)
+        populated++
+      }
+    })
+  }
+
   tracksArr.forEach(c => {
     artistIDs.add(c.track.artists[0].id)
     if (artistMap.has(c.track.artists[0].id)) {
@@ -98,18 +89,55 @@ function organize() {
       artistMap.set(c.track.artists[0].id, { tracks: [c.track.id], genres: [] })
     }
   })
+
   const promises = []
-  promises.push(getTerms(artistIDs).then(rArr => {
-    let populated = 0
-    rArr.forEach(r => {
-      populated++
-      log.debug(r.id())
-      artistMap.get(r.id()).terms = r.response.terms
+  const artistIdArray = Array.from(artistIDs)
+  for (let i = 0; i < artistIdArray.length; i += 50) {
+    promises.push(
+        fetchArtists(artistIdArray.slice(i, i + 50)).then(mapArtistGenres)
+    )
+  }
+
+  return Promise.all(promises).then(() => {
+    log.info(populated, '/', artistIDs.size, 'artists have their genres populated')
+    return artistMap
+  })
+}
+
+function mapAlbums() {
+  let populated = 0
+
+  function mapAlbumGenres(res) {
+    res.albums.forEach(albumObj => {
+      if (albumObj.genres.length) {
+        albumMap.get(albumObj.id).genres =
+            albumMap.get(albumObj.id).genres.concat(albumObj.genres)
+        populated++
+      }
     })
-    log.debug(populated, '/', artistIDs.size)
-    return Promise.resolve(artistMap)
-  }))
-  return Promise.all(promises)
+  }
+
+  tracksArr.forEach(c => {
+    albumIDs.add(c.track.album.id)
+    if (albumMap.has(c.track.album.id)) {
+      albumMap.get(c.track.album.id).tracks.push(c.track.id)
+    } else {
+      albumMap.set(c.track.album.id, { tracks: [c.track.id], genres: [] })
+    }
+  })
+
+  const promises = []
+  const albumIdArray = Array.from(albumIDs)
+  for (let i = 0; i < albumIdArray.length; i += 20) {
+    promises.push(
+        fetchAlbums(albumIdArray.slice(i, i + 20)).then(mapAlbumGenres)
+    )
+  }
+
+  return Promise.all(promises).then(() => {
+    log.info(populated, '/', albumIDs.size, 'albums have their genres populated')
+    return albumMap
+  })
 }
 
 function collect() {
@@ -132,4 +160,6 @@ function collect() {
 }
 
 exports.collect = collect
-exports.organize = organize
+exports.map = mapArtists
+exports.mapArtists = mapArtists
+exports.mapAlbums = mapAlbums

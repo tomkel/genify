@@ -40,8 +40,9 @@ function createPlaylists(map) {
 
 function gen() {
   tracks.collect()
-    .then(tracks.organize)
-    .then(createPlaylists)
+    .then(tracks.mapArtists)
+    .then(tracks.mapAlbums)
+    //.then(createPlaylists)
 }
 
 function save() {
