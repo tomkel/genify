@@ -42,8 +42,8 @@ function authCodeFlow(authCode) {
     if (r.access_token) {
       tokens.access = r.access_token
       tokens.refresh = r.refresh_token
-      log.info('we have an access token')
-      log.info(tokens)
+      log.info('We have an access token')
+      log.debug(tokens)
       return { accessToken: r.access_token, refreshToken: r.refresh_token }
     }
     return Promise.reject('Failed to get access token')

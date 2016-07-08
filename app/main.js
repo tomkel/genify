@@ -12,6 +12,10 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
   process.exit(1)
 }
 
+process.on('unhandledRejection', (reason, p) => {
+  log.error('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
+})
+
 function requestHandler(request, response) {
   const urlObj = url.parse(request.url, true)
   log.debug(urlObj)
@@ -24,11 +28,11 @@ function requestHandler(request, response) {
 
   if (urlObj.query.code) {
     response.end()
-    log.info(`got auth code: ${urlObj.query.code}`)
+    log.debug(`got auth code: ${urlObj.query.code}`)
 
     auth.authCodeFlow(urlObj.query.code)
-      .then(a => console.log(a))
-      // .then(playlist.gen)
+      .then(playlist.gen)
+      // .then(playlist.save)
   } else {
     const html = `<!DOCTYPE html>
       <button onclick="document.location.assign('${auth.url}')">
@@ -39,6 +43,6 @@ function requestHandler(request, response) {
   }
 }
 
-;(() => {
+(() => {
   http.createServer(requestHandler).listen(8080)
 })()
