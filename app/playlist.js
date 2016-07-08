@@ -1,6 +1,7 @@
 const querystring = require('querystring')
-const log = require('./log')
 const tokens = require('./tokens')
+const tracks = require('./tracks')
+const log = require('./log')
 
 const playlists = new Map()
 function createPlaylists(map) {
@@ -38,8 +39,8 @@ function createPlaylists(map) {
 }
 
 function gen() {
-  collectTracks()
-    .then(organizeTracks)
+  tracks.collect()
+    .then(tracks.organize)
     .then(createPlaylists)
 }
 

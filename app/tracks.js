@@ -4,6 +4,9 @@ const tokens = require('./tokens')
 
 let tracksArr = []
 const artistIDs = new Set()
+// key: artist ID
+// value: { tracks: [track IDs],
+//          genres: [genres] }
 const artistMap = new Map()
 
 // returns a Promise
@@ -47,7 +50,7 @@ function getTerms(artists) {
  *  tracks
  *  genres
  */
-function organizeTracks() {
+function organize() {
   tracksArr.forEach(c => {
     artistIDs.add(c.track.artists[0].id)
     if (artistMap.has(c.track.artists[0].id)) {
@@ -70,7 +73,7 @@ function organizeTracks() {
   return Promise.all(promises)
 }
 
-function fetchAllAndStore() {
+function collect() {
   return fetchTracks(0).then(r => {
     const totalTracks = store(r)
     log.info(`Total Tracks: ${totalTracks}`)
@@ -91,6 +94,5 @@ function fetchAllAndStore() {
   })
 }
 
-exports.fetch = fetchTracks
-exports.store = store
-exports.fetchAllAndStore = fetchAllAndStore
+exports.collect = collect
+exports.organize = organize
