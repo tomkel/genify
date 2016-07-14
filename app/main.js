@@ -44,5 +44,7 @@ function requestHandler(request, response) {
 }
 
 (() => {
-  http.createServer(requestHandler).listen(8080)
+  http.createServer(requestHandler).listen(8080, () => {
+    log.info('Please visit http://localhost:8080 in your browser to begin the program')
+  })
 })()
