@@ -39,10 +39,11 @@ function createPlaylists(map) {
 }
 
 function gen() {
-  tracks.collect()
-    .then(tracks.mapArtists)
+  return tracks.collect()
+    //.then(tracks.map)
     .then(tracks.mapAlbums)
-    //.then(createPlaylists)
+    .then(tracks.mapArtists)
+  //  .then(createPlaylists)
 }
 
 function save() {

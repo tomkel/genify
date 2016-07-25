@@ -32,7 +32,7 @@ function requestHandler(request, response) {
 
     auth.authCodeFlow(urlObj.query.code)
       .then(playlist.gen)
-      // .then(playlist.save)
+      .then(playlist.save)
   } else {
     const html = `<!DOCTYPE html>
       <button onclick="document.location.assign('${auth.url}')">
