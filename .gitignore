@@ -40,3 +40,5 @@ node_modules
 
 # sqlite db
 genify.db
+
+dist
