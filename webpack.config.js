@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './app/entry.jsx',
+  entry: ['babel-polyfill', 'isomorphic-fetch', './app/entry'],
   output: {
     path: './dist',
     filename: 'bundle.js',

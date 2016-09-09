@@ -5,13 +5,11 @@ import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
 import Progress from './components/Progress'
 import Playlists from './components/Playlists'
-
-require('isomorphic-fetch')
 import log from './log'
 
-/*process.on('unhandledRejection', (reason, p) => {
+process.on('unhandledRejection', (reason, p) => {
   log.error('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
-})*/
+})
 
 ReactDOM.render(
   <Router history={browserHistory}>
