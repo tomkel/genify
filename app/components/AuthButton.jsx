@@ -17,12 +17,7 @@ function getAuthURL() {
 
 class AuthButton extends React.Component {
 
-  constructor() {
-    super()
-    this.authRedirect = this.authRedirect.bind(this)
-  }
-
-  authRedirect() {
+  authRedirect = () => {
     document.location.assign(getAuthURL())
   }
 

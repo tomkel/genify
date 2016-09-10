@@ -6,7 +6,6 @@ class Tracks {
 
   constructor(token) {
     this.token = token
-  // this.store = this.store.bind(this)
   }
 
   tracksArr = []
