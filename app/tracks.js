@@ -1,12 +1,8 @@
+import * as spotify from './spotify'
 import log from './log'
 
-const querystring = require('querystring')
 
 class Tracks {
-
-  constructor(token) {
-    this.token = token
-  }
 
   tracksArr = []
 
@@ -22,56 +18,6 @@ class Tracks {
   //          genres: [genres] }
   albumMap = new Map()
 
-  // returns a Promise
-  // result array is in an items property
-  fetchTracks(offset) {
-    const tracksURL = 'https://api.spotify.com/v1/me/tracks'
-    const headers = new Headers()
-    headers.set('Authorization', `Bearer ${this.token}`)
-    const qs = querystring.stringify({ limit: 50, offset })
-    return fetch(`${tracksURL}?${qs}`, { headers }).then(r => r.json())
-  }
-
-  // maximum 50 IDs
-  // result array is in an artists property
-  fetchArtists(IDs) {
-    const headers = new Headers()
-    headers.set('Authorization', `Bearer ${this.token}`)
-
-    let url = 'https://api.spotify.com/v1/artists?ids='
-    for (const ID of IDs) {
-      url += `${ID},`
-    }
-    url = url.slice(0, -1) // remove trailing comma
-
-    return fetch(url, { headers }).then(r => r.json())
-  }
-
-  // maximum 20 IDs
-  // result array is in an albums property
-  fetchAlbums(IDs) {
-    const headers = new Headers()
-    headers.set('Authorization', `Bearer ${this.token}`)
-
-    let url = 'https://api.spotify.com/v1/albums?ids='
-    for (const ID of IDs) {
-      url += `${ID},`
-    }
-    url = url.slice(0, -1) // remove trailing comma
-
-    return fetch(url, { headers }).then(r => r.json())
-  }
-
-
-  // takes an HTTP response
-  store = (response) => {
-    if (response.error) {
-      log.error(response.error)
-    } else {
-      this.tracksArr = this.tracksArr.concat(response.items)
-    }
-  }
-
   /**
    * returns a promise with artistMap parameter
    *  tracks
@@ -80,8 +26,8 @@ class Tracks {
   mapArtists = () => {
     let populated = 0
 
-    const mapArtistGenres = (res) => {
-      res.artists.forEach(artistObj => {
+    const mapArtistGenres = (artists) => {
+      artists.forEach(artistObj => {
         if (artistObj.genres.length) {
           this.artistMap.get(artistObj.id).genres =
               this.artistMap.get(artistObj.id).genres.concat(artistObj.genres)
@@ -99,25 +45,17 @@ class Tracks {
       }
     })
 
-    const promises = []
-    const artistIdArray = Array.from(this.artistIDs)
-    for (let i = 0; i < artistIdArray.length; i += 50) {
-      promises.push(
-          this.fetchArtists(artistIdArray.slice(i, i + 50)).then(mapArtistGenres)
-      )
-    }
-
-    return Promise.all(promises).then(() => {
+    return spotify.getAllArtists(this.artistIDs).then(mapArtistGenres).then(() => {
       log.info(populated, '/', this.artistIDs.size, 'artists have their genres populated')
       return this.artistMap
     })
   }
 
-  mapAlbums() {
+  mapAlbums = () => {
     let populated = 0
 
-    const mapAlbumGenres = (res) => {
-      res.albums.forEach(albumObj => {
+    const mapAlbumGenres = (albums) => {
+      albums.forEach(albumObj => {
         if (albumObj.genres.length) {
           this.albumMap.get(albumObj.id).genres =
               this.albumMap.get(albumObj.id).genres.concat(albumObj.genres)
@@ -135,38 +73,13 @@ class Tracks {
       }
     })
 
-    const promises = []
-    const albumIdArray = Array.from(this.albumIDs)
-    for (let i = 0; i < albumIdArray.length; i += 20) {
-      promises.push(
-          this.fetchAlbums(albumIdArray.slice(i, i + 20)).then(mapAlbumGenres)
-      )
-    }
-
-    return Promise.all(promises).then(() => {
+    return spotify.getAllAlbums(this.albumIDs).then(mapAlbumGenres).then(() => {
       log.info(populated, '/', this.albumIDs.size, 'albums have their genres populated')
       return this.albumMap
     })
   }
 
-  collect = () =>
-    this.fetchTracks(0).then(res => {
-      this.store(res)
-      const totalTracks = res.total
-      log.info(`Total Tracks: ${totalTracks}`)
-
-      const promises = []
-      for (let offset = 50; offset < totalTracks; offset += 50) {
-        promises.push(
-          this.fetchTracks(offset).then(this.store)
-        )
-      }
-
-      return Promise.all(promises).then(() =>
-        log.info('Got all tracks')
-      )
-    })
-
+  collect = () => spotify.getAllTracks().then(tracks => this.tracksArr = tracks)
 }
 
 export default Tracks
