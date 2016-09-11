@@ -6,13 +6,18 @@ import log from '../log'
 
 export default class Progress extends React.Component {
 
+  static propTypes = {
+    token: React.PropTypes.string,
+    setPlaylists: React.PropTypes.func,
+  }
+
   componentDidMount() {
     if (!this.props.token) return
     log.info(this.props.token)
     setToken(this.props.token)
     const playlists = new Playlists(this.props.token)
+    this.props.setPlaylists(playlists)
     playlists.gen()
-      .then(() => this.props.setPlaylists(playlists))
       .then(() => browserHistory.push('/display'))
   }
 

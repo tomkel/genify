@@ -39,7 +39,7 @@ class Playlists {
       .then(this.tracks.mapArtists)
       .then(this.createNewPlaylists)
 
-  createSpotifyPlaylists = () => {
+  saveSpotifyPlaylists = () => {
     for (const [name, trackIds] of this.newPlaylists) {
       if (trackIds.length < 5) break
       spotify.createPlaylist(name)
@@ -64,7 +64,13 @@ class Playlists {
   save = () => {
     log.info('saving')
     this.unfollowSpotifyPlaylists()
-      .then(this.createSpotifyPlaylists)
+      .then(this.saveSpotifyPlaylists)
+  }
+
+  getPlaylistNamesAndSizeMap = () => {
+    const newMap = new Map(this.newPlaylists)
+    newMap.forEach((value, key, map) => map.set(key, value.length))
+    return newMap
   }
 }
 

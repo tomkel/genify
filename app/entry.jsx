@@ -4,7 +4,7 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
 import Progress from './components/Progress'
-import Playlists from './components/Playlists'
+import Save from './components/Save'
 import log from './log'
 
 process.on('unhandledRejection', (reason, p) => {
@@ -18,7 +18,7 @@ ReactDOM.render(
       <IndexRoute component={AuthButton} />
       <Route path="/auth" component={Progress} />
       <Route path="/generate" component={Progress} />
-      <Route path="/display" component={Playlists} />
+      <Route path="/display" component={Save} />
     </Route>
   </Router>,
   document.getElementById('app'))

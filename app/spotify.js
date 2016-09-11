@@ -167,6 +167,6 @@ export { setAccessToken as setToken,
          fetchAllArtists as getAllArtists,
          fetchAllAlbums as getAllAlbums,
          createPlaylist,
-         unfollowPlaylist,
+         addTracksToPlaylist,
          getAllPlaylists,
-         addTracksToPlaylist }
+         unfollowPlaylist }
