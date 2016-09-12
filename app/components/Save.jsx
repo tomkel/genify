@@ -17,6 +17,13 @@ export default class Save extends React.Component {
   }
 
   render() {
+    const playlists = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries()).map(
+      (curr, i) =>
+        <li key={i}>
+          <strong>{curr[0]}</strong> - {curr[1]}
+        </li>
+    )
+
     return (
       <div>
         <h1>Playlists</h1>
@@ -29,7 +36,9 @@ export default class Save extends React.Component {
           />
           Delete existing playlists
         </label>
-
+        <ul>
+          {playlists}
+        </ul>
       </div>
     )
   }
