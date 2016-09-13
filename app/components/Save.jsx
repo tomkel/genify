@@ -1,5 +1,6 @@
 import React from 'react'
 import Playlists from '../playlists'
+import styles from './save.css'
 
 export default class Save extends React.Component {
 
@@ -19,8 +20,11 @@ export default class Save extends React.Component {
   render() {
     const playlists = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries()).map(
       (curr, i) =>
-        <li key={i}>
-          <strong>{curr[0]}</strong> - {curr[1]}
+        <li key={i} className={styles.playlist}>
+          <input type="checkbox" id={`playlist${i}`} />
+          <label htmlFor={`playlist${i}`}>
+            <strong>{curr[0]}</strong> - {curr[1]}
+          </label>
         </li>
     )
 
