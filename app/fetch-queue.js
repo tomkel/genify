@@ -16,16 +16,7 @@ function process() {
     return intervalId = null
   }
   const req = queue.shift()
-  req().catch((e) => {
-    console.error(e)
-    console.log('retrying')
-    queue.unshift(req)
-  }).then((r) => {
-    if (!r.ok) {
-      return Promise.reject(`Error ${r.status}: ${r.statusText}`)
-    }
-    return r
-  })
+  req()
 }
 
 export default enqueue

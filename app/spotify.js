@@ -17,8 +17,9 @@ function setUserId(uid) {
 function fetchGeneric(url, qs, postData, method) {
   const headers = { Authorization: `Bearer ${token}` }
   const opts = {}
-  if (method) 
+  if (method) {
     opts.method = method
+  }
   if (postData) {
     headers['Content-Type'] = 'application/json'
     opts.method = 'POST'
@@ -27,15 +28,29 @@ function fetchGeneric(url, qs, postData, method) {
   opts.headers = new Headers(headers)
 
   const qsURL = qs ? `${url}?${querystring.stringify(qs)}` : url
-  return new Promise((resolve, reject) =>
-    fetchQueue(() =>
-      fetch(qsURL, opts).then(r => {
-        if (r.headers.get('Content-Type').includes('json'))
+
+  let tries = 1
+
+  const promiseFetchFunc = () =>
+    new Promise((resolve, reject) =>
+      fetchQueue(() => fetch(qsURL, opts).then((r) => {
+        if (!r.ok) {
+          const errTxt = `Error ${r.status}: ${r.statusText}`
+          if (tries < 5) {
+            log.error(`Retrying ${tries}`)
+            tries += 1
+            return promiseFetchFunc()
+          }
+          return Promise.reject(errTxt)
+        }
+        if (r.headers.get('Content-Type').includes('json')) {
           return r.json()
+        }
         return r.text()
-      }).then(resolve).catch(reject)
+      }).then(resolve).catch(reject))
     )
-  )
+
+  return promiseFetchFunc()
 }
 
 async function getUserId() {
