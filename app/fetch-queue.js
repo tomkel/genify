@@ -6,6 +6,7 @@ function process() {
   if (!queue.length) {
     clearInterval(intervalId)
     intervalId = null
+    currInterval = 0
     return
   }
   const req = queue.shift()
@@ -19,7 +20,7 @@ function enqueue(element, interval = 100) {
     intervalId = setInterval(process, interval)
     return element
   }
-  if (currInterval !== interval) {
+  if (currInterval < interval) {
     currInterval = interval
     clearInterval(intervalId)
     intervalId = setInterval(process, interval)
