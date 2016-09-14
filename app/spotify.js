@@ -55,8 +55,9 @@ function fetchGeneric(url, qs, postData, method) {
 }
 
 async function getUserId() {
-  if (!userId)
-    return userId = await fetchGeneric('https://api.spotify.com/v1/me').then(json => json.id)
+  if (!userId) {
+    userId = await fetchGeneric('https://api.spotify.com/v1/me').then(json => json.id)
+  }
   return userId
 }
 
@@ -185,4 +186,5 @@ export { setAccessToken as setToken,
          createPlaylist,
          addTracksToPlaylist,
          getAllPlaylists,
-         unfollowPlaylist }
+         unfollowPlaylist,
+         getUserId }

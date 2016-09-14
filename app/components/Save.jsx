@@ -1,12 +1,15 @@
 import React from 'react'
+import { browserHistory } from 'react-router'
 import { List, ListItem } from 'material-ui/List'
 import Subheader from 'material-ui/Subheader'
 import Checkbox from 'material-ui/Checkbox'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ActionDone from 'material-ui/svg-icons/action/done'
-import CircularProgress from 'material-ui/CircularProgress'
+import LinearProgress from 'material-ui/LinearProgress'
 import Overlay from 'material-ui/internal/Overlay'
 import Playlists from '../playlists'
+import { getUserId } from '../spotify'
+import { updates as fetchQueue } from '../fetch-queue'
 import log from '../log'
 
 const styles = {
@@ -35,22 +38,45 @@ export default class Save extends React.Component {
     playlists: new Playlists(true),
   }
 
+  constructor(props) {
+    super(props)
+
+    getUserId()
+
+    fetchQueue.on('update', (doneRequests, totalRequests) => {
+      console.log('update received')
+      console.log(doneRequests, totalRequests, doneRequests / totalRequests)
+      this.setState({
+        doneRequests,
+        totalRequests,
+      })
+    })
+  }
+
   state = {
     deleteExistingPlaylists: true,
     saving: false,
+    doneRequests: 0,
+    totalRequests: 1,
   }
 
   save = () => {
     this.setState({ saving: true })
     this.props.playlists.save()
+      .then(() => browserHistory.push('/end'))
   }
 
   render() {
+    let saving
     if (this.state.saving) {
-      return (
+      saving = (
         <div>
           <Overlay show />
-          <CircularProgress size={2.5} style={styles.progress} />
+          <LinearProgress
+            max={this.state.totalRequests}
+            value={this.state.doneRequests}
+            style={styles.progress}
+          />
         </div>
       )
     }
@@ -84,6 +110,7 @@ export default class Save extends React.Component {
         <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>
           <ActionDone />
         </FloatingActionButton>
+        {saving}
       </div>
     )
   }

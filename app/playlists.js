@@ -59,12 +59,16 @@ class Playlists {
       })
 
   saveSpotifyPlaylists = () => {
+    const promises = []
     for (const [name, trackIds] of this.newPlaylists) {
-      if (trackIds.length < 5) break
-      spotify.createPlaylist(name)
-        .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
-        .then(() => log.info('Created', name))
+      if (trackIds.length < 2) break
+      promises.push(
+        spotify.createPlaylist(name)
+          .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
+          .then(() => log.info('Created', name))
+      )
     }
+    return Promise.all(promises)
   }
 
  // returns an array of ids that match the regex parameter
@@ -82,7 +86,7 @@ class Playlists {
 
   save = () => {
     log.info('saving')
-    this.unfollowSpotifyPlaylists()
+    return this.unfollowSpotifyPlaylists()
       .then(this.saveSpotifyPlaylists)
   }
 

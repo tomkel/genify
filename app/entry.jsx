@@ -9,6 +9,7 @@ import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
 import Generate from './components/Generate'
 import Save from './components/Save'
+import End from './components/End'
 import log from './log'
 
 process.on('unhandledRejection', (reason, p) => {
@@ -31,6 +32,7 @@ ReactDOM.render(
         <IndexRoute component={AuthButton} />
         <Route path="/generate" component={Generate} />
         <Route path="/save" component={Save} />
+        <Route path="/end" component={End} />
       </Route>
     </Router>
   </MuiThemeProvider>,

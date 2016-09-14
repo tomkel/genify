@@ -1,20 +1,41 @@
+const EventEmitter = require('events')
+
 const queue = []
 let intervalId
 let currInterval
+let totalRequests = 0
+
+const updates = new EventEmitter()
+
+function getTotal() {
+  return totalRequests
+}
+
+function getDone() {
+  return totalRequests - queue.length
+}
+
+function emitUpdate() {
+  updates.emit('update', getDone(), getTotal())
+}
 
 function process() {
   if (!queue.length) {
     clearInterval(intervalId)
     intervalId = null
     currInterval = 0
+    totalRequests = 0
     return
   }
   const req = queue.shift()
   req()
+  emitUpdate()
 }
 
 function enqueue(element, interval = 100) {
   queue.push(element)
+  totalRequests += 1
+  emitUpdate()
   if (!intervalId) {
     currInterval = interval
     intervalId = setInterval(process, interval)
@@ -29,3 +50,4 @@ function enqueue(element, interval = 100) {
 }
 
 export default enqueue
+export { updates }
