@@ -5,7 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
-import Progress from './components/Progress'
+import Generate from './components/Generate'
 import Save from './components/Save'
 import log from './log'
 
@@ -21,7 +21,7 @@ ReactDOM.render(
       <Route path="/" component={Layout}>
 
         <IndexRoute component={AuthButton} />
-        <Route path="/generate" component={Progress} />
+        <Route path="/generate" component={Generate} />
         <Route path="/save" component={Save} />
       </Route>
     </Router>

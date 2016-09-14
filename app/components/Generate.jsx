@@ -5,7 +5,7 @@ import Playlists from '../playlists'
 import { setToken } from '../spotify'
 import log from '../log'
 
-export default class Progress extends React.Component {
+export default class Generate extends React.Component {
 
   static propTypes = {
     token: React.PropTypes.string,
