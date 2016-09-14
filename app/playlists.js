@@ -60,7 +60,7 @@ class Playlists {
 
   saveSpotifyPlaylists = () => {
     for (const [name, trackIds] of this.newPlaylists) {
-      if (trackIds.length < 30) break
+      if (trackIds.length < 5) break
       spotify.createPlaylist(name)
         .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
         .then(() => log.info('Created', name))

@@ -31,7 +31,7 @@ function fetchGeneric(url, qs, postData, method) {
 
   let tries = 1
 
-  const promiseFetchFunc = () =>
+  const promiseFetchFunc = interval =>
     new Promise((resolve, reject) =>
       fetchQueue(() => fetch(qsURL, opts).then((r) => {
         if (!r.ok) {
@@ -39,18 +39,19 @@ function fetchGeneric(url, qs, postData, method) {
           if (tries < 5) {
             log.error(`Retrying ${tries}`)
             tries += 1
-            return promiseFetchFunc()
+            return promiseFetchFunc(100 * tries)
           }
           return Promise.reject(errTxt)
         }
-        if (r.headers.get('Content-Type').includes('json')) {
+        const ctHeader = r.headers.get('Content-Type') || ''
+        if (ctHeader.includes('json')) {
           return r.json()
         }
         return r.text()
-      }).then(resolve).catch(reject))
+      }).then(resolve).catch(reject), interval)
     )
 
-  return promiseFetchFunc()
+  return promiseFetchFunc(100)
 }
 
 async function getUserId() {
