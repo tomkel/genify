@@ -47,7 +47,7 @@ async function getUserId() {
 // takes an HTTP response
 function concatRes(response, storage, property) {
   if (response.error) {
-    log.error(response.error)
+    log.error(response)
   } else {
     return storage.concat(response[property])
   }

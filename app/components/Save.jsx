@@ -1,12 +1,21 @@
 import React from 'react'
+import { List, ListItem } from 'material-ui/List'
+import Subheader from 'material-ui/Subheader'
+import Checkbox from 'material-ui/Checkbox'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import ActionDone from 'material-ui/svg-icons/action/done'
 import Playlists from '../playlists'
+import log from '../log'
 import styles from './save.css'
 
 export default class Save extends React.Component {
 
   static propTypes = {
     playlists: React.PropTypes.instanceOf(Playlists),
-    save: React.PropTypes.func,
+  }
+
+  static defaultProps = {
+    playlists: new Playlists(true),
   }
 
   state = {
@@ -20,12 +29,12 @@ export default class Save extends React.Component {
   render() {
     const playlists = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries()).map(
       (curr, i) =>
-        <li key={i} className={styles.playlist}>
-          <input type="checkbox" id={`playlist${i}`} />
-          <label htmlFor={`playlist${i}`}>
-            <strong>{curr[0]}</strong> - {curr[1]}
-          </label>
-        </li>
+        <ListItem
+          key={i}
+          primaryText={curr[0]}
+          secondaryText={`${curr[1]} tracks`}
+          leftCheckbox={<Checkbox />}
+        />
     )
 
     return (
@@ -40,9 +49,13 @@ export default class Save extends React.Component {
           />
           Delete existing playlists
         </label>
-        <ul>
+        <List>
+          <Subheader>Playlists</Subheader>
           {playlists}
-        </ul>
+        </List>
+        <FloatingActionButton secondary className={styles.done} onClick={this.save}>
+          <ActionDone />
+        </FloatingActionButton>
       </div>
     )
   }

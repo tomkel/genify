@@ -1,4 +1,5 @@
 import React from 'react'
+import RaisedButton from 'material-ui/RaisedButton'
 
 const querystring = require('querystring')
 
@@ -8,7 +9,7 @@ function getAuthURL() {
   const authParams = {
     client_id: '38dfce7a65f84684b6678907870b0cec',
     response_type: 'token',
-    redirect_uri: 'http://localhost:8080/auth',
+    redirect_uri: 'http://localhost:8080/generate',
     // state: stateString,
     scope: 'playlist-modify-public user-library-read',
   }
@@ -23,9 +24,15 @@ class AuthButton extends React.Component {
 
   render() {
     return (
-      <button onClick={this.authRedirect}>
-        Click to Authorize
-      </button>
+      <div>
+        <h1>Genify is an app that organizes your saved music in Spotify.</h1>
+        <h2>
+          Genify reads the songs in <i>Your Music</i> and sorts them into playlists based on genre.
+        </h2>
+        <h2>Press the button below to get started</h2>
+
+        <RaisedButton label="Click Here to Authorize" primary onClick={this.authRedirect} />
+      </div>
     )
   }
 }

@@ -4,7 +4,7 @@ const querystring = require('querystring')
 
 class Layout extends React.Component {
 
-  state = { playlists: null }
+  state = { playlists: undefined }
 
   setPlaylists = (playlists) => {
     this.setState({ playlists })

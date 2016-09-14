@@ -4,16 +4,31 @@ import log from './log'
 
 class Playlists {
 
-  newPlaylists = new Map()
+  constructor(useDom = false) {
+    if (useDom) {
+      log.info('retrieving playlists from DOM')
+      const storedPlaylists = sessionStorage.getItem('playlists')
+      if (storedPlaylists) {
+        log.info('creating playlist object')
+        this.newPlaylists = new Map(JSON.parse(storedPlaylists))
+      } else {
+        log.info('no playlists found in DOM')
+      }
+    }
+    if (!this.newPlaylists) {
+      this.newPlaylists = new Map()
+    }
+  }
+
   tracks = new Tracks()
 
   createNewPlaylists = (map) => {
     log.debug(map)
-    map.forEach(v => {
+    map.forEach((v) => {
       try {
         // organize by genre
-        v.genres.forEach(g => {
-          v.tracks.forEach(t => {
+        v.genres.forEach((g) => {
+          v.tracks.forEach((t) => {
             if (this.newPlaylists.has(g)) {
               this.newPlaylists.get(g).push(t)
             } else {
@@ -38,10 +53,14 @@ class Playlists {
   gen = () => this.tracks.collect()
       .then(this.tracks.mapArtists)
       .then(this.createNewPlaylists)
+      .then(() => {
+        log.info('storing playlists in DOM')
+        sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+      })
 
   saveSpotifyPlaylists = () => {
     for (const [name, trackIds] of this.newPlaylists) {
-      if (trackIds.length < 5) break
+      if (trackIds.length < 30) break
       spotify.createPlaylist(name)
         .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
         .then(() => log.info('Created', name))
@@ -56,7 +75,7 @@ class Playlists {
 
   unfollowSpotifyPlaylists = () =>
     this.getMatchedSpotifyPlaylists(/\[.*?genify.*?\]/)
-      .then(matched => {
+      .then((matched) => {
         matched.forEach(spotify.unfollowPlaylist)
         log.info(matched.length, 'playlists cleared')
       })

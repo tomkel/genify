@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
 import Progress from './components/Progress'
@@ -11,14 +13,17 @@ process.on('unhandledRejection', (reason, p) => {
   log.error('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
 })
 
-ReactDOM.render(
-  <Router history={browserHistory}>
-    <Route path="/" component={Layout}>
+injectTapEventPlugin()
 
-      <IndexRoute component={AuthButton} />
-      <Route path="/auth" component={Progress} />
-      <Route path="/generate" component={Progress} />
-      <Route path="/display" component={Save} />
-    </Route>
-  </Router>,
+ReactDOM.render(
+  <MuiThemeProvider>
+    <Router history={browserHistory}>
+      <Route path="/" component={Layout}>
+
+        <IndexRoute component={AuthButton} />
+        <Route path="/generate" component={Progress} />
+        <Route path="/save" component={Save} />
+      </Route>
+    </Router>
+  </MuiThemeProvider>,
   document.getElementById('app'))
