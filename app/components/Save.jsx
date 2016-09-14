@@ -5,7 +5,7 @@ import Subheader from 'material-ui/Subheader'
 import Checkbox from 'material-ui/Checkbox'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ActionDone from 'material-ui/svg-icons/action/done'
-import LinearProgress from 'material-ui/LinearProgress'
+import CircularProgress from 'material-ui/CircularProgress'
 import Overlay from 'material-ui/internal/Overlay'
 import Playlists from '../playlists'
 import { getUserId } from '../spotify'
@@ -43,14 +43,14 @@ export default class Save extends React.Component {
 
     getUserId()
 
-    fetchQueue.on('update', (doneRequests, totalRequests) => {
+    /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
       console.log(doneRequests, totalRequests, doneRequests / totalRequests)
       this.setState({
         doneRequests,
         totalRequests,
       })
-    })
+    }) */
   }
 
   state = {
@@ -72,11 +72,7 @@ export default class Save extends React.Component {
       saving = (
         <div>
           <Overlay show />
-          <LinearProgress
-            max={this.state.totalRequests}
-            value={this.state.doneRequests}
-            style={styles.progress}
-          />
+          <CircularProgress size={2.5} style={styles.progress} />
         </div>
       )
     }

@@ -16,7 +16,7 @@ function getDone() {
 }
 
 function emitUpdate() {
-  updates.emit('update', getDone(), getTotal())
+  // updates.emit('update', getDone(), getTotal())
 }
 
 function process() {
