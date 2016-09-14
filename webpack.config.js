@@ -16,10 +16,6 @@ module.exports = {
         presets: ['latest', 'react'],
         plugins: ['transform-class-properties'],
       },
-    }, {
-      test: /\.css$/,
-      exclude: /node_modules/,
-      loader: 'style!css?modules',
     }],
   },
 }

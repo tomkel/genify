@@ -4,9 +4,26 @@ import Subheader from 'material-ui/Subheader'
 import Checkbox from 'material-ui/Checkbox'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ActionDone from 'material-ui/svg-icons/action/done'
+import CircularProgress from 'material-ui/CircularProgress'
+import Overlay from 'material-ui/internal/Overlay'
 import Playlists from '../playlists'
 import log from '../log'
-import styles from './save.css'
+
+const styles = {
+  progress: {
+    margin: 'auto',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  doneButton: {
+    position: 'fixed',
+    right: '1rem',
+    bottom: '1rem',
+  },
+}
 
 export default class Save extends React.Component {
 
@@ -20,13 +37,24 @@ export default class Save extends React.Component {
 
   state = {
     deleteExistingPlaylists: true,
+    saving: false,
   }
 
   save = () => {
+    this.setState({ saving: true })
     this.props.playlists.save()
   }
 
   render() {
+    if (this.state.saving) {
+      return (
+        <div>
+          <Overlay show />
+          <CircularProgress size={2.5} style={styles.progress} />
+        </div>
+      )
+    }
+
     const playlists = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries()).map(
       (curr, i) =>
         <ListItem
@@ -53,7 +81,7 @@ export default class Save extends React.Component {
           <Subheader>Playlists</Subheader>
           {playlists}
         </List>
-        <FloatingActionButton secondary className={styles.done} onClick={this.save}>
+        <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>
           <ActionDone />
         </FloatingActionButton>
       </div>

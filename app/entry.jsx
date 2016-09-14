@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { minBlack } from 'material-ui/styles/colors'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import Layout from './components/Layout'
 import AuthButton from './components/AuthButton'
@@ -15,8 +17,14 @@ process.on('unhandledRejection', (reason, p) => {
 
 injectTapEventPlugin()
 
+const muiTheme = getMuiTheme({
+  overlay: {
+    backgroundColor: minBlack,
+  },
+})
+
 ReactDOM.render(
-  <MuiThemeProvider>
+  <MuiThemeProvider muiTheme={muiTheme}>
     <Router history={browserHistory}>
       <Route path="/" component={Layout}>
 

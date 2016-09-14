@@ -14,7 +14,6 @@ export default class Generate extends React.Component {
 
   componentDidMount() {
     if (!this.props.token) return
-    log.info(this.props.token)
     setToken(this.props.token)
     const playlists = new Playlists(false)
     this.props.setPlaylists(playlists)
@@ -27,6 +26,6 @@ export default class Generate extends React.Component {
       return <h1>{'There was an error with authentication'}</h1>
     }
 
-    return <CircularProgress size={3} />
+    return <CircularProgress size={2.5} />
   }
 }
