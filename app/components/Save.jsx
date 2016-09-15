@@ -7,11 +7,8 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ActionDone from 'material-ui/svg-icons/action/done'
 import CircularProgress from 'material-ui/CircularProgress'
 import Overlay from 'material-ui/internal/Overlay'
-import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import Divider from 'material-ui/Divider'
-import TextField from 'material-ui/TextField'
-import PlaylistCheckbox from './PlaylistCheckbox'
 import Playlists from '../playlists'
 import { getUserId } from '../spotify'
 import { updates as fetchQueue } from '../fetch-queue'
@@ -56,17 +53,8 @@ export default class Save extends React.Component {
 
   constructor(props, context) {
     super(props)
-
     getUserId()
-
     this.styles = getStyles(context.muiTheme)
-    const state = {
-      deleteExistingPlaylists: true,
-      saving: false,
-      minTracks: 2,
-    }
-    this.playlistArr.map(curr => curr[1] > 1).forEach((bool, i) => state[`playlist${i}`] = bool)
-    this.state = state
 
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
@@ -78,7 +66,11 @@ export default class Save extends React.Component {
     }) */
   }
 
-  playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
+  state = {
+    deleteExistingPlaylists: true,
+    saving: false,
+    minTracks: 2,
+  }
 
   componentDidUpdate() {
     // give time for the progress bar to show up before saving
@@ -94,33 +86,38 @@ export default class Save extends React.Component {
 
 
   unselect = () => {
-
-
+    for (let i = 0; i < this.playlistArr.length; i += 1) {
+      const numTracks = this.playlistArr[i][1]
+      if (numTracks < this.state.minTracks) {
+        for (let j = i; j < this.playlistChecked.length; j += 1) {
+          this.playlistChecked[j] = false
+        }
+        this.forceUpdate()
+        return
+      }
+    }
   }
 
-  setPlaylistChecked = i =>
-    (ev) => {
-      console.log('checked')
-      const newState = {}
-      newState[`playlist${i}`] = ev.target.checked
-      this.setState(newState)
-    }
+  playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
+  playlistChecked = this.playlistArr.map(curr => curr[1] > 1)
 
   render() {
     const { styles } = this
-    console.log(styles)
-    this.playlistListItems = this.playlistArr.map(
+
+    const playlistListItems = this.playlistArr.map(
       (curr, i) =>
-        <PlaylistCheckbox
+        <ListItem
           key={i}
           primaryText={curr[0]}
           secondaryText={`${curr[1]} tracks`}
-          checked={this.state[`playlist${i}`]}
-          onCheck={this.setPlaylistChecked(i)}
+          leftCheckbox={
+            <Checkbox
+              defaultChecked={this.playlistChecked[i]}
+              onCheck={(ev) => { this.playlistChecked[i] = ev.target.checked }}
+            />
+          }
         />
-    )
-
-    console.log(this.playlistListItems)
+   )
 
     let saving
     if (this.state.saving) {
@@ -132,7 +129,6 @@ export default class Save extends React.Component {
       )
     }
 
-    console.log('context', this.context)
     return (
       <div>
         <h1>Playlists</h1>
@@ -153,7 +149,7 @@ export default class Save extends React.Component {
           <RaisedButton
             label={`Unselect playlists with less than ${this.state.minTracks} tracks`}
             primary
-            onClick={ev => this.unselect}
+            onClick={this.unselect}
           />
           <RaisedButton
             label="+"
@@ -167,7 +163,7 @@ export default class Save extends React.Component {
 
         <List>
           <Subheader>Playlists</Subheader>
-          {this.playlistListItems}
+          {playlistListItems}
         </List>
         <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>
           <ActionDone />
