@@ -24,16 +24,23 @@ const muiTheme = getMuiTheme({
   },
 })
 
-ReactDOM.render(
-  <MuiThemeProvider muiTheme={muiTheme}>
-    <Router history={browserHistory}>
-      <Route path="/" component={Layout}>
+class Main extends React.Component {
 
-        <IndexRoute component={AuthButton} />
-        <Route path="/generate" component={Generate} />
-        <Route path="/save" component={Save} />
-        <Route path="/end" component={End} />
-      </Route>
-    </Router>
-  </MuiThemeProvider>,
-  document.getElementById('app'))
+  render() {
+    return (
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <Router history={browserHistory}>
+          <Route path="/" component={Layout}>
+
+            <IndexRoute component={AuthButton} />
+            <Route path="/generate" component={Generate} />
+            <Route path="/save" component={Save} />
+            <Route path="/end" component={End} />
+          </Route>
+        </Router>
+      </MuiThemeProvider>
+    )
+  }
+}
+
+ReactDOM.render(<Main />, document.getElementById('app'))

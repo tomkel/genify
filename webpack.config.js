@@ -1,3 +1,16 @@
+const webpack = require('webpack')
+
+let plugins = []
+if (process.env.NODE_ENV === 'production') {
+  plugins = [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+  ]
+}
+
 module.exports = {
   entry: ['babel-polyfill', 'isomorphic-fetch', './app/entry'],
   output: {
@@ -18,4 +31,5 @@ module.exports = {
       },
     }],
   },
+  plugins,
 }
