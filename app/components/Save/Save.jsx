@@ -22,7 +22,7 @@ function getStyles(muiTheme) {
     },
     progress: {
       margin: 'auto',
-      position: 'absolute',
+      position: 'fixed',
       top: 0,
       bottom: 0,
       left: 0,
