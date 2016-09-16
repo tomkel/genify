@@ -1,7 +1,7 @@
 import React from 'react'
-import { List, ListItem } from 'material-ui/List'
+import { List } from 'material-ui/List'
 import Subheader from 'material-ui/Subheader'
-import Checkbox from 'material-ui/Checkbox'
+import SaveListItem from './SaveListItem'
 
 const styles = {
   playlist: {
@@ -12,8 +12,26 @@ const styles = {
 export default class SaveList extends React.Component {
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.checkedArr !== this.props.checkedArr
+    return true
+    // return nextProps.checkedArr !== this.props.checkedArr
   }
+
+  updateCheckedArr = []
+
+  listItems = this.props.checkedArr.map((curr, i) => {
+    //this.updateCheckedArr[i] = (checked
+    return (
+      <SaveListItem
+        key={`li${i}`}
+        style={styles.playlist}
+        primaryText={this.props.playlistArr[i][0]}
+        secondaryText={`${this.props.playlistArr[i][1]} tracks`}
+        checkedArr={this.props.checkedArr}
+        checked={this.props.checkedArr[i]}
+        index={i}
+      />
+    )
+  })
 
   render() {
     return (
@@ -23,20 +41,7 @@ export default class SaveList extends React.Component {
             {this.props.numTracksCategorized}/{this.props.totalTracks} tracks have genre metadata and were categorized into {this.props.playlistArr.length} playlists
           </Subheader>
         </div>
-        {this.props.checkedArr.map((curr, i) =>
-          <ListItem
-            key={`li${i}`}
-            primaryText={this.props.playlistArr[i][0]}
-            secondaryText={`${this.props.playlistArr[i][1]} tracks`}
-            style={styles.playlist}
-            leftCheckbox={
-              <Checkbox
-                defaultChecked={this.props.checkedArr[i]}
-                ref={(element) => { this.props.refArr[i] = element }}
-              />
-            }
-          />
-        )}
+        {this.listItems}
       </List>
     )
   }

@@ -51,8 +51,6 @@ const muiTheme = getMuiTheme(merge({}, darkBaseTheme, {
   backgroundColor: '#121314',
 }))
 
-log.debug(muiTheme)
-
 class Main extends React.Component {
 
   render() {
