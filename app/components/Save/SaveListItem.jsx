@@ -8,11 +8,18 @@ export default class SaveListItem extends React.Component {
     checked: this.props.checked,
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ checked: nextProps.checked })
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.checked !== this.state.checked
+  }
+
   updateCheck = (ev, checked) => {
     //this.props.checkedArr[this.props.index] = checked
     this.setState({ checked })
   }
-
 
   render() {
     const checkbox = (

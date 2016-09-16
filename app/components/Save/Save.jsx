@@ -79,6 +79,16 @@ export default class Save extends React.Component {
     this.styles = getStyles(context.muiTheme)
     this.totalTracks = props.playlists.totalTracks()
 
+    this.playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
+    this.playlistChecked = this.playlistArr.map(curr => curr[1] > 1)
+    this.playlistRefs = []
+
+    this.state = {
+      deleteExistingPlaylists: true,
+      saving: false,
+      playlistChecked: this.playlistArr.map(curr => curr[1] > 1),
+    }
+
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
       console.log(doneRequests, totalRequests, doneRequests / totalRequests)
@@ -89,9 +99,11 @@ export default class Save extends React.Component {
     }) */
   }
 
-  state = {
-    deleteExistingPlaylists: true,
-    saving: false,
+  shouldComponentUpdate(nextProps, nextState) {
+    //return this.state.playlistChecked
+    //return nextState.deleteExistingPlaylists !== this.state.deleteExistingPlaylists
+    //return nextState.playlistChecked !== this.state.playlistChecked
+    return true
   }
 
   componentDidUpdate() {
@@ -126,17 +138,11 @@ export default class Save extends React.Component {
   }
 
   uncheckAll = () => {
-    this.playlistChecked = this.playlistChecked.map(() => false)
-    this.forceUpdate()
+    this.setState({ playlistChecked: this.state.playlistChecked.map(() => false) })
   }
   checkAll = () => {
-    this.playlistChecked = this.playlistChecked.map(() => true)
-    this.forceUpdate()
+    this.setState({ playlistChecked: this.state.playlistChecked.map(() => true) })
   }
-
-  playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
-  playlistChecked = this.playlistArr.map(curr => curr[1] > 1)
-  playlistRefs = []
 
   render() {
     const { styles } = this
@@ -173,7 +179,7 @@ export default class Save extends React.Component {
         <Divider />
 
         <SaveList
-          checkedArr={this.playlistChecked}
+          checkedArr={this.state.playlistChecked}
           playlistArr={this.playlistArr}
           refArr={this.playlistRefs}
           totalTracks={this.totalTracks}
