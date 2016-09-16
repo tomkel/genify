@@ -18,10 +18,17 @@ const styles = {
 function getAuthURL() {
   const authURL = 'https://accounts.spotify.com/authorize'
   // const stateString = crypto.randomBytes(64).toString('hex')
+  let redirectUrl
+  if (process.env.NODE_ENV === 'production') {
+    redirectUrl = 'https://tkel.ly/genify/generate'
+  } else {
+    redirectUrl = 'http://localhost:8080/generate'
+  }
+
   const authParams = {
     client_id: '38dfce7a65f84684b6678907870b0cec',
     response_type: 'token',
-    redirect_uri: 'http://localhost:8080/generate',
+    redirect_uri: redirectUrl,
     // state: stateString,
     scope: 'playlist-modify-public user-library-read',
   }
