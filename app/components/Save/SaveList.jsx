@@ -7,13 +7,6 @@ const styles = {
   playlist: {
     marginLeft: '8%',
   },
-  subheaderContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  subheader: {
-    width: 'auto',
-  },
 }
 
 export default class SaveList extends React.Component {
@@ -25,11 +18,10 @@ export default class SaveList extends React.Component {
   render() {
     return (
       <List>
-        <div style={styles.subheaderContainer}>
-          <Subheader style={styles.subheader}>
-            {this.props.numTracksCategorized}/{this.props.totalTracks} tracks have genre metadata
+        <div>
+          <Subheader>
+            {this.props.numTracksCategorized}/{this.props.totalTracks} tracks have genre metadata and were categorized into {this.props.playlistArr.length} playlists
           </Subheader>
-          <Subheader style={styles.subheader}>{this.props.playlistArr.length} Playlists</Subheader>
         </div>
         {this.props.checkedArr.map((curr, i) =>
           <ListItem
