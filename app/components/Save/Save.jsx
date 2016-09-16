@@ -76,7 +76,6 @@ export default class Save extends React.Component {
     getUserId()
     this.styles = getStyles(context.muiTheme)
     this.totalTracks = props.playlists.totalTracks()
-    this.numTracksCategorized = props.playlists.numTracksCategorized
 
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
@@ -176,7 +175,7 @@ export default class Save extends React.Component {
           playlistArr={this.playlistArr}
           refArr={this.playlistRefs}
           totalTracks={this.totalTracks}
-          numTracksCategorized={this.numTracksCategorized}
+          numTracksCategorized={this.props.playlists.numTracksCategorized}
         />
 
         <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>
