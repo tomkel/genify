@@ -99,6 +99,7 @@ export default class Save extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return nextState.playlistChecked !== this.state.playlistChecked ||
+      nextState.saving !== this.state.saving ||
       nextState.deleteExistingPlaylists !== this.state.deleteExistingPlaylists
   }
 
