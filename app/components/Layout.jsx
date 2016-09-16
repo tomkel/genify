@@ -2,6 +2,12 @@ import React from 'react'
 
 const querystring = require('querystring')
 
+const styles = {
+  container: {
+    fontFamily: 'Roboto, sans-serif',
+  },
+}
+
 class Layout extends React.Component {
 
   state = { playlists: undefined }
@@ -17,7 +23,7 @@ class Layout extends React.Component {
     const children = React.cloneElement(this.props.children,
         { token, setPlaylists: this.setPlaylists, playlists: this.state.playlists })
     return (
-      <div>
+      <div style={styles.container}>
         <header>header</header>
         <main>
           {children}

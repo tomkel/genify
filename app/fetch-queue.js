@@ -25,6 +25,7 @@ function process() {
     intervalId = null
     currInterval = 0
     totalRequests = 0
+    updates.emit('done')
     return
   }
   const req = queue.shift()

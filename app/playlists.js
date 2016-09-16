@@ -58,15 +58,19 @@ class Playlists {
         sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
       })
 
-  saveSpotifyPlaylists = () => {
+  saveSpotifyPlaylists = (playlistsToSave) => {
     const promises = []
-    for (const [name, trackIds] of this.newPlaylists) {
-      if (trackIds.length < 2) break
-      promises.push(
-        spotify.createPlaylist(name)
+    const playlistArr = Array.from(this.newPlaylists)
+    for (let i = 0; i < playlistsToSave.length; i += 1) {
+      if (playlistsToSave[i]) {
+        const name = playlistArr[i][0]
+        const trackIds = playlistArr[i][1]
+        promises.push(
+          spotify.createPlaylist(name)
           .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
           .then(() => log.info('Created', name))
-      )
+        )
+      }
     }
     return Promise.all(promises)
   }
@@ -84,10 +88,14 @@ class Playlists {
         log.info(matched.length, 'playlists cleared')
       })
 
-  save = () => {
+  // playlistsToSave is a boolean array
+  save = (playlistsToSave, deleteFirst) => {
     log.info('saving')
-    return this.unfollowSpotifyPlaylists()
-      .then(this.saveSpotifyPlaylists)
+    if (deleteFirst) {
+      return this.unfollowSpotifyPlaylists()
+        .then(() => this.saveSpotifyPlaylists(playlistsToSave))
+    }
+    return this.saveSpotifyPlaylists(playlistsToSave)
   }
 
   getPlaylistNamesAndSizeMap = () => {
