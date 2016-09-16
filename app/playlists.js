@@ -5,14 +5,16 @@ import log from './log'
 class Playlists {
 
   constructor(useDom = false) {
-    if (useDom) {
-      log.info('retrieving playlists from DOM')
-      const storedPlaylists = sessionStorage.getItem('playlists')
-      if (storedPlaylists) {
-        log.info('creating playlist object')
-        this.newPlaylists = new Map(JSON.parse(storedPlaylists))
-      } else {
-        log.info('no playlists found in DOM')
+    if (process.env.NODE_ENV === 'development') {
+      if (useDom) {
+        log.info('retrieving playlists from DOM')
+        const storedPlaylists = sessionStorage.getItem('playlists')
+        if (storedPlaylists) {
+          log.info('creating playlist object')
+          this.newPlaylists = new Map(JSON.parse(storedPlaylists))
+        } else {
+          log.info('no playlists found in DOM')
+        }
       }
     }
     if (!this.newPlaylists) {
@@ -59,9 +61,12 @@ class Playlists {
   gen = () => this.tracks.collect()
       .then(this.tracks.mapArtists)
       .then(this.createNewPlaylists)
-      .then(() => {
-        log.info('storing playlists in DOM')
-        sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+      .then((newPlaylists) => {
+        if (process.env.NODE_ENV === 'development') {
+          log.info('storing playlists in DOM')
+          sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+        }
+        return newPlaylists
       })
 
   saveSpotifyPlaylists = (playlistsToSave) => {
