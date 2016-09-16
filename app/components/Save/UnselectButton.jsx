@@ -1,11 +1,13 @@
 import React from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
+import { emphasize } from 'material-ui/utils/colorManipulator'
+
 
 function getStyles(muiTheme) {
   return {
     spinner: {
       minWidth: '1rem',
-      backgroundColor: muiTheme.palette.borderColor,
+      backgroundColor: emphasize(muiTheme.palette.primary1Color),
     },
     container: {
       display: 'inline-block',

@@ -19,6 +19,8 @@ function getStyles(muiTheme) {
     container: {
       maxWidth: '40rem',
       margin: '0 auto',
+      paddingTop: '0.1rem',
+      backgroundColor: muiTheme.palette.cardBackground,
     },
     progress: {
       margin: 'auto',

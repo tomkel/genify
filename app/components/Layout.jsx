@@ -5,46 +5,55 @@ import { red600, redA100 } from 'material-ui/styles/colors'
 
 const querystring = require('querystring')
 
-const styles = {
-  container: {
-    fontFamily: 'Roboto, sans-serif',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: '97vh',
-  },
-  main: {
-    flex: 1,
-  },
-  mainChildren: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  headerButton: {
-  },
-  headerButtonLabel: {
-    letterSpacing: '0.5em',
-  },
-  heart: {
-    width: '1em',
-    height: '1em',
-  },
-  github: {
-    width: '1.5rem',
-    height: '1.5rem',
-  },
-  nameLink: {
-    textDecoration: 'none',
-    color: 'red',
-  },
+function getStyles(muiTheme) {
+  return {
+    container: {
+      fontFamily: 'Roboto, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: '97vh',
+      backgroundColor: muiTheme.backgroundColor,
+      color: muiTheme.palette.textColor,
+    },
+    main: {
+      flex: 1,
+    },
+    mainChildren: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    headerButton: {
+    },
+    headerButtonLabel: {
+      letterSpacing: '0.5em',
+      color: '#fff',
+    },
+    footer: {
+      marginTop: '1.5rem',
+    },
+    heart: {
+      width: '1em',
+      height: '1em',
+    },
+    github: {
+      fill: muiTheme.palette.textColor,
+      width: '1.5rem',
+      height: '1.5rem',
+    },
+    nameLink: {
+      textDecoration: 'none',
+      color: muiTheme.palette.accent1Color,
+    },
+  }
 }
 
 const HeartIcon = props =>
@@ -60,6 +69,15 @@ const OctocatIcon = props =>
 
 class Layout extends React.Component {
 
+  static contextTypes = {
+    muiTheme: React.PropTypes.object.isRequired,
+  }
+
+  constructor(props, context) {
+    super(props)
+    this.styles = getStyles(context.muiTheme)
+  }
+
   state = { playlists: undefined }
 
   setPlaylists = (playlists) => {
@@ -67,6 +85,7 @@ class Layout extends React.Component {
   }
 
   render() {
+    const { styles } = this
     // remove leading #
     const parsedObj = querystring.parse(this.props.location.hash.substr(1))
     const token = parsedObj.access_token || null
@@ -89,7 +108,7 @@ class Layout extends React.Component {
         <main style={styles.main}>
           {children}
         </main>
-        <footer>
+        <footer style={styles.footer}>
           Made with <HeartIcon key="heart" style={styles.heart} /> by
           <a href="/" style={styles.nameLink}> Tommy Kelly</a>
         </footer>
