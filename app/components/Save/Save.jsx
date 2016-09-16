@@ -80,8 +80,6 @@ export default class Save extends React.Component {
     this.totalTracks = props.playlists.totalTracks()
 
     this.playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
-    this.playlistChecked = this.playlistArr.map(curr => curr[1] > 1)
-    this.playlistRefs = []
 
     this.state = {
       deleteExistingPlaylists: true,
@@ -100,23 +98,16 @@ export default class Save extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    //return this.state.playlistChecked
-    //return nextState.deleteExistingPlaylists !== this.state.deleteExistingPlaylists
-    //return nextState.playlistChecked !== this.state.playlistChecked
-    return true
+    return nextState.playlistChecked !== this.state.playlistChecked ||
+      nextState.deleteExistingPlaylists !== this.state.deleteExistingPlaylists
   }
 
   componentDidUpdate() {
     // give time for the progress bar to show up before saving
     if (this.state.saving) {
-      this.updateCheckedFromRefs()
-      this.props.playlists.save(this.playlistChecked, this.state.deleteExistingPlaylists)
+      this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
         .then(() => browserHistory.push('/end'))
     }
-  }
-
-  updateCheckedFromRefs = () => {
-    this.playlistChecked = this.playlistRefs.map(e => e.state.switched)
   }
 
   save = () => {
@@ -124,17 +115,23 @@ export default class Save extends React.Component {
   }
 
   unselect = (minTracks) => {
-    this.updateCheckedFromRefs()
     for (let i = 0; i < this.playlistArr.length; i += 1) {
       const numTracks = this.playlistArr[i][1]
       if (numTracks < minTracks) {
-        for (let j = i; j < this.playlistChecked.length; j += 1) {
-          this.playlistChecked[j] = false
+        const newCheckedArr = this.state.playlistChecked.slice()
+        for (let j = i; j < this.state.playlistChecked.length; j += 1) {
+          newCheckedArr[j] = false
         }
-        this.forceUpdate()
+        this.setState({ playlistChecked: newCheckedArr })
         return
       }
     }
+  }
+
+  updateChecked = (index, checked) => {
+    const newCheckedArr = this.state.playlistChecked.slice()
+    newCheckedArr[index] = checked
+    this.setState({ playlistChecked: newCheckedArr })
   }
 
   uncheckAll = () => {
@@ -180,8 +177,8 @@ export default class Save extends React.Component {
 
         <SaveList
           checkedArr={this.state.playlistChecked}
+          updateChecked={this.updateChecked}
           playlistArr={this.playlistArr}
-          refArr={this.playlistRefs}
           totalTracks={this.totalTracks}
           numTracksCategorized={this.props.playlists.numTracksCategorized}
         />

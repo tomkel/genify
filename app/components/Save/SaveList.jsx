@@ -12,27 +12,11 @@ const styles = {
 export default class SaveList extends React.Component {
 
   shouldComponentUpdate(nextProps) {
-    // return false
-    return true
-    // return nextProps.checkedArr !== this.props.checkedArr
+    return nextProps.checkedArr !== this.props.checkedArr
   }
 
-  updateCheckedArr = []
-
-  listItems = this.props.checkedArr.map((curr, i) => {
-    //this.updateCheckedArr[i] = (checked
-    return (
-      <SaveListItem
-        key={`li${i}`}
-        style={styles.playlist}
-        primaryText={this.props.playlistArr[i][0]}
-        secondaryText={`${this.props.playlistArr[i][1]} tracks`}
-        checkedArr={this.props.checkedArr}
-        checked={this.props.checkedArr[i]}
-        index={i}
-      />
-    )
-  })
+  updateCheckedArr = this.props.playlistArr.map((curr, i) =>
+      (ev, checked) => this.props.updateChecked(i, checked))
 
   render() {
     const listItems = this.props.checkedArr.map((curr, i) => (
@@ -41,9 +25,8 @@ export default class SaveList extends React.Component {
         style={styles.playlist}
         primaryText={this.props.playlistArr[i][0]}
         secondaryText={`${this.props.playlistArr[i][1]} tracks`}
-        checkedArr={this.props.checkedArr}
         checked={this.props.checkedArr[i]}
-        index={i}
+        onCheck={this.updateCheckedArr[i]}
       />
     ))
 

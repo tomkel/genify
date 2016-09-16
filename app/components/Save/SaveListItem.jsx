@@ -17,19 +17,18 @@ export default class SaveListItem extends React.Component {
   }
 
   updateCheck = (ev, checked) => {
-    //this.props.checkedArr[this.props.index] = checked
     this.setState({ checked })
   }
 
   render() {
+    const { primaryText, secondaryText, style, onCheck } = this.props
+
     const checkbox = (
       <Checkbox
         checked={this.state.checked}
-        //onCheck={this.props.updateChecked}
-        onCheck={this.updateCheck}
+        onCheck={onCheck}
       />
     )
-    const { primaryText, secondaryText, style } = this.props
     return (
       <ListItem
         primaryText={primaryText}
