@@ -49,6 +49,10 @@ function getStyles(muiTheme) {
       marginRight: 'auto',
       maxWidth: '18em',
     },
+    headerText: {
+      textAlign: 'center',
+      fontWeight: 300,
+    },
   }
 }
 
@@ -71,6 +75,8 @@ export default class Save extends React.Component {
     super(props)
     getUserId()
     this.styles = getStyles(context.muiTheme)
+    this.totalTracks = props.playlists.totalTracks()
+    this.numTracksCategorized = props.playlists.numTracksCategorized
 
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
@@ -146,7 +152,7 @@ export default class Save extends React.Component {
 
     return (
       <div style={styles.container}>
-        <h1>Choose which playlists you want</h1>
+        <h1 style={styles.headerText}>Choose your playlists</h1>
         <div style={styles.buttonContainer}>
           <RaisedButton label="Select All" primary style={styles.button} onClick={this.checkAll} />
           <RaisedButton label="Select None" primary style={styles.button} onClick={this.uncheckAll} />
@@ -157,7 +163,7 @@ export default class Save extends React.Component {
           />
         </div>
         <Checkbox
-          label="Delete existing genify playlists"
+          label="Delete existing Genify playlists"
           checked={this.state.deleteExistingPlaylists}
           onCheck={(ev, checked) => this.setState({ deleteExistingPlaylists: checked })}
           style={styles.headerCheckbox}
@@ -169,6 +175,8 @@ export default class Save extends React.Component {
           checkedArr={this.playlistChecked}
           playlistArr={this.playlistArr}
           refArr={this.playlistRefs}
+          totalTracks={this.totalTracks}
+          numTracksCategorized={this.numTracksCategorized}
         />
 
         <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>

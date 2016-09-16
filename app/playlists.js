@@ -22,8 +22,12 @@ class Playlists {
 
   tracks = new Tracks()
 
+  totalTracks = () => this.tracks.tracksArr.length
+  numTracksCategorized = 0
+
   createNewPlaylists = (map) => {
     log.debug(map)
+    const sortedTracks = new Set()
     map.forEach((v) => {
       try {
         // organize by genre
@@ -34,6 +38,7 @@ class Playlists {
             } else {
               this.newPlaylists.set(g, [t])
             }
+            sortedTracks.add(t)
           })
         })
       } catch (e) {
@@ -41,6 +46,7 @@ class Playlists {
         log.error('failed on', v)
       }
     })
+    this.numTracksCategorized = sortedTracks.size
     // maps are iterated by insertion order
     // reorder map by array size descending
     this.newPlaylists = new Map([...this.newPlaylists.entries()].sort((a, b) =>
