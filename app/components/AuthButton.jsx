@@ -5,9 +5,12 @@ const querystring = require('querystring')
 
 const styles = {
   container: {
-    maxWidth: '31rem',
-    height: '65vh',
+    maxWidth: '34rem',
+    height: '58vh',
     textAlign: 'center',
+  },
+  introText: {
+    fontSize: '2.2em',
   },
   startButton: {
     width: '20rem',
@@ -44,7 +47,9 @@ class AuthButton extends React.Component {
   render() {
     return (
       <div style={Object.assign({}, this.props.style, styles.container)}>
-        <h1>Genify organizes the songs saved to <i>Your Music</i> in Spotify into playlists based on genre.</h1>
+        <h1 style={styles.introText}>
+          Genify organizes your saved music in Spotify into playlists based on genre.
+        </h1>
 
         <RaisedButton
           label="Click here to get started"
