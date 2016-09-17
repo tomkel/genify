@@ -14,6 +14,8 @@ import { getUserId } from '../../spotify'
 import { updates as fetchQueue } from '../../fetch-queue'
 import log from '../../log'
 
+const path = require('path')
+
 function getStyles(muiTheme) {
   return {
     container: {
@@ -106,8 +108,9 @@ export default class Save extends React.Component {
   componentDidUpdate() {
     // give time for the progress bar to show up before saving
     if (this.state.saving) {
+      const nextPath = path.join(this.props.routes[0].path, 'end')
       this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
-        .then(() => browserHistory.push('/end'))
+        .then(() => browserHistory.push(nextPath))
     }
   }
 

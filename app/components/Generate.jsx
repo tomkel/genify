@@ -5,6 +5,8 @@ import Playlists from '../playlists'
 import { setToken } from '../spotify'
 import log from '../log'
 
+const path = require('path')
+
 const styles = {
   progress: {
     margin: 'auto',
@@ -28,8 +30,9 @@ export default class Generate extends React.Component {
     setToken(this.props.token)
     const playlists = new Playlists(false)
     this.props.setPlaylists(playlists)
+    const nextPath = path.join(this.props.routes[0].path, 'save')
     playlists.gen()
-      .then(() => browserHistory.push('/save'))
+      .then(() => browserHistory.push(nextPath))
   }
 
   render() {

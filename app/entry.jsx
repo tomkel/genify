@@ -51,18 +51,20 @@ const muiTheme = getMuiTheme(merge({}, darkBaseTheme, {
   backgroundColor: '#121314',
 }))
 
+const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
+
 class Main extends React.Component {
 
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <Router history={browserHistory}>
-          <Route path="/" component={Layout}>
+          <Route path={basePath} component={Layout}>
 
             <IndexRoute component={AuthButton} />
-            <Route path="/generate" component={Generate} />
-            <Route path="/save" component={Save} />
-            <Route path="/end" component={End} />
+            <Route path="generate" component={Generate} />
+            <Route path="save" component={Save} />
+            <Route path="end" component={End} />
           </Route>
         </Router>
       </MuiThemeProvider>
