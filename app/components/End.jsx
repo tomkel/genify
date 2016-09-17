@@ -25,7 +25,7 @@ export default class End extends React.Component {
     return (
       <div style={styles.container}>
         <h1 style={styles.h1}>Success!</h1>
-        <h2 style={styles.h2}>Check your spotify account for the playlists.</h2>
+        <h2 style={styles.h2}>Check your Spotify account for the playlists.</h2>
       </div>
     )
   }
