@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Playlists from '../playlists'
 import { setToken } from '../spotify'
 import log from '../log'
+import { LayoutContext } from './Layout'
 
 const styles = {
   progress: {
@@ -17,37 +18,35 @@ const styles = {
   },
 }
 
-export default class Generate extends React.Component {
+Generate.propTypes = {
+  context: PropTypes.array.isRequired,
+}
+export default function Generate() {
+  const [token, setPlaylists, styles]: LayoutContext = useOutletContext()
 
-  static propTypes = {
-    token: PropTypes.string,
-    setPlaylists: PropTypes.func,
-  }
-
-  componentDidMount() {
-    if (!this.props.token) return
+  useEffect(() => {
+    if (!token) return
     const navigate = useNavigate()
-    setToken(this.props.token)
+    setToken(token)
     const playlists = new Playlists(false)
-    this.props.setPlaylists(playlists)
-    const nextPath = this.props.routes[0].path + '/save'
+    setPlaylists(playlists)
     playlists.gen()
-      .then(() => navigate(nextPath))
+      .then(() => navigate('save'))
+    
+  }, [token])
+
+  if (!token) {
+    return <h1>{'There was an error with authentication'}</h1>
   }
 
-  render() {
-    if (!this.props.token) {
-      return <h1>{'There was an error with authentication'}</h1>
-    }
-
-    return (
-      <div>
-        <CircularProgress style={styles.progress} size={2.5} />
-        {/* make sure that all fonts are loaded */}
-        <span style={{ visibility: 'hidden', fontWeight: 300, fontFamily: 'Roboto' }}>a</span>
-        <span style={{ visibility: 'hidden', fontWeight: 400, fontFamily: 'Roboto' }}>a</span>
-        <span style={{ visibility: 'hidden', fontWeight: 500, fontFamily: 'Roboto' }}>a</span>
-      </div>
-    )
-  }
+  return (
+    <div style={styles.mainChildren}>
+      <CircularProgress sx={styles.progress} size={2.5} />
+      {/* make sure that all fonts are loaded */}
+      <span style={{ visibility: 'hidden', fontWeight: 300, fontFamily: 'Roboto' }}>a</span>
+      <span style={{ visibility: 'hidden', fontWeight: 400, fontFamily: 'Roboto' }}>a</span>
+      <span style={{ visibility: 'hidden', fontWeight: 500, fontFamily: 'Roboto' }}>a</span>
+      <span style={{ visibility: 'hidden', fontWeight: 700, fontFamily: 'Roboto' }}>a</span>
+    </div>
+  )
 }

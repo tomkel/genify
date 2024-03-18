@@ -36,29 +36,26 @@ function getAuthURL() {
   return `${authURL}?${authParams.toString()}`
 }
 
-class AuthButton extends React.Component {
-
-  authRedirect = () => {
+const authRedirect = () => {
     document.location.assign(getAuthURL())
-  }
-
-  render() {
-    return (
-      <div style={Object.assign({}, this.props.style, styles.container)}>
-        <h1 style={styles.introText}>
-          Genify organizes your saved music in Spotify into playlists based on genre.
-        </h1>
-
-        <Button
-          variant="contained"
-          label="Click here to get started"
-          primary
-          onClick={this.authRedirect}
-          style={styles.startButton}
-        />
-      </div>
-    )
-  }
 }
 
-export default AuthButton
+export default function AuthButton() {
+  const [contextStyles]: LayoutContext = useOutletContext()
+
+  return (
+    <div style={Object.assign({}, contextStyles.mainContainer, styles.container)}>
+      <h1 style={styles.introText}>
+        Genify organizes your saved music in Spotify into playlists based on genre.
+      </h1>
+
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={authRedirect}
+        sx={styles.startButton}
+      >Click here to get started</Button>
+    </div>
+  )
+}
+}

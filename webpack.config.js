@@ -15,18 +15,20 @@ module.exports = (env, argv) => {
     },
     module: {
       rules: [{
-        test: /\.jsx?$/,
+        test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
             presets: [
+              '@babel/preset-typescript',
               ['@babel/preset-env', { targets: 'defaults' }],
               ['@babel/preset-react', { development: argv.mode === 'development' }],
             ],
           },
         },
-      }],
+      },
+    ],
     }
   }
 }

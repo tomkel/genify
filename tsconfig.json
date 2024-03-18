@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "lib": [ "esnext" ],
+        // "noImplicitAny": true,
+        "jsx": "react",
+        "allowJs": true,
+        "noEmit": true,
+        "isolatedModules": true,
+        "module": "nodenext",
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true
+    }
+}
