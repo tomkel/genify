@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import grey from '@material-ui/core/colors/grey';
+import grey from '@mui/material/colors/grey';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import AuthButton from './components/AuthButton';
@@ -55,10 +55,10 @@ const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
 const router = createBrowserRouter([
   { 
     path: basePath, 
-    element: <Layout />,
+    element: <Layout theme={theme}/>,
     children: [
       { path: 'generate', element: <Generate /> },
-      { path: 'save', element: <Save /> },
+      { path: 'save', element: <Save theme={theme}/> },
       { path: 'end', element: <End /> },
       { index: true, element: <AuthButton /> },
     ],

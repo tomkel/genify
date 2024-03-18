@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { browserHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
-import DoneIcon from '@mui/material/done'
+import DoneIcon from '@mui/icons-material/Done'
 import CircularProgress from '@mui/material/CircularProgress'
 import Backdrop from '@mui/material/Backdrop'
 import Divider from '@mui/material/Divider'
+import { useTheme } from '@mui/material/styles'
 import SaveList from './SaveList'
 import UnselectButton from './UnselectButton'
 import Playlists from '../../playlists'
@@ -63,10 +64,7 @@ export default class Save extends React.Component {
 
   static propTypes = {
     playlists: PropTypes.instanceOf(Playlists),
-  }
-
-  static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -76,7 +74,7 @@ export default class Save extends React.Component {
   constructor(props, context) {
     super(props)
     getUserId()
-    this.styles = getStyles(context.muiTheme)
+    this.styles = getStyles(props.theme)
     this.totalTracks = props.playlists.totalTracks()
 
     this.playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
@@ -106,9 +104,10 @@ export default class Save extends React.Component {
   componentDidUpdate() {
     // give time for the progress bar to show up before saving
     if (this.state.saving) {
+      const navigate = useNavigate()
       const nextPath = this.props.routes[0].path + '/end'
       this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
-        .then(() => browserHistory.push(nextPath))
+        .then(() => navigate(nextPath))
     }
   }
 
@@ -166,6 +165,7 @@ export default class Save extends React.Component {
             action={this.unselect}
             min={2}
             style={styles.button}
+            theme={theme}
           />
         </div>
         <Checkbox

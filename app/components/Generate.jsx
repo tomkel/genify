@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { browserHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Playlists from '../playlists'
 import { setToken } from '../spotify'
@@ -26,12 +26,13 @@ export default class Generate extends React.Component {
 
   componentDidMount() {
     if (!this.props.token) return
+    const navigate = useNavigate()
     setToken(this.props.token)
     const playlists = new Playlists(false)
     this.props.setPlaylists(playlists)
     const nextPath = this.props.routes[0].path + '/save'
     playlists.gen()
-      .then(() => browserHistory.push(nextPath))
+      .then(() => navigate(nextPath))
   }
 
   render() {

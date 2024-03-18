@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
-import { emphasize } from '@mui/material/styles/colorManipulator'
+import { useTheme } from '@mui/material/styles'
+import { emphasize } from '@mui/system/colorManipulator'
 
 
 function getStyles(muiTheme) {
@@ -19,16 +20,17 @@ function getStyles(muiTheme) {
 
 export default class UnselectButton extends React.Component {
 
+  static propTypes = {
+    theme: PropTypes.object.isRequired,
+  }
+
   static defaultProps = {
     min: 2,
-  }
-  static contextTypes = {
-    theme: PropTypes.object.isRequired,
   }
 
   constructor(props, context) {
     super(props)
-    this.styles = getStyles(context.theme)
+    this.styles = getStyles(props.theme)
   }
 
   state = {
