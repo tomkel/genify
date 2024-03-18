@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
-import Playlists from '../playlists'
-import { setToken } from '../spotify'
-import log from '../log'
-import { LayoutContext } from './Layout'
+import Playlists from '../playlists.js'
+import { setToken } from '../spotify.js'
+import log from '../log.js'
+import type { LayoutContext } from './Layout.tsx'
 
 const styles = {
   progress: {
@@ -22,7 +22,7 @@ Generate.propTypes = {
   context: PropTypes.array.isRequired,
 }
 export default function Generate() {
-  const [token, setPlaylists, styles]: LayoutContext = useOutletContext()
+  const [styles, token, setPlaylists]: LayoutContext = useOutletContext()
 
   useEffect(() => {
     if (!token) return

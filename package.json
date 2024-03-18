@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Build spotify playlists from saved music based on their type and genre.",
   "main": "app/main.jsx",
+  "type": "module",
   "scripts": {
     "start": "webpack serve --mode development -d inline-source-map --hot --static app --history-api-fallback",
     "build": "webpack build --mode production --progress",
@@ -38,8 +39,10 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "babel-loader": "9",
+    "eslint": "^8.57.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.2",
+    "typescript-eslint": "^7.3.0",
     "webpack": "5",
     "webpack-cli": "5",
     "webpack-dev-server": "5"
