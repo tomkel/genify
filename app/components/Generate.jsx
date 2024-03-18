@@ -1,11 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
-import CircularProgress from 'material-ui/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import Playlists from '../playlists'
 import { setToken } from '../spotify'
 import log from '../log'
-
-const path = require('path')
 
 const styles = {
   progress: {
@@ -21,8 +20,8 @@ const styles = {
 export default class Generate extends React.Component {
 
   static propTypes = {
-    token: React.PropTypes.string,
-    setPlaylists: React.PropTypes.func,
+    token: PropTypes.string,
+    setPlaylists: PropTypes.func,
   }
 
   componentDidMount() {
@@ -30,7 +29,7 @@ export default class Generate extends React.Component {
     setToken(this.props.token)
     const playlists = new Playlists(false)
     this.props.setPlaylists(playlists)
-    const nextPath = path.join(this.props.routes[0].path, 'save')
+    const nextPath = this.props.routes[0].path + '/save'
     playlists.gen()
       .then(() => browserHistory.push(nextPath))
   }

@@ -1,9 +1,9 @@
 import React from 'react'
-import SvgIcon from 'material-ui/SvgIcon'
-import FlatButton from 'material-ui/FlatButton'
-import { red600, redA100 } from 'material-ui/styles/colors'
-
-const querystring = require('querystring')
+import PropTypes from 'prop-types'
+import { Outlet } from "react-router-dom";
+import SvgIcon from '@mui/material/SvgIcon'
+import Button from '@mui/material/Button'
+import red from '@mui/material/colors/red'
 
 function getStyles(muiTheme) {
   return {
@@ -57,7 +57,7 @@ function getStyles(muiTheme) {
 }
 
 const HeartIcon = props =>
-  <SvgIcon color={red600} hoverColor={redA100} viewBox="0 0 32 29.6" {...props}>
+  <SvgIcon color={red['600']} hoverColor={red.A100} viewBox="0 0 32 29.6" {...props}>
     <path
       d={`M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
       c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z`}
@@ -70,12 +70,14 @@ const OctocatIcon = props =>
 class Layout extends React.Component {
 
   static contextTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
   }
 
   constructor(props, context) {
     super(props)
-    this.styles = getStyles(context.muiTheme)
+    console.log('props', props)
+    console.log('context', context)
+    this.styles = getStyles(context.theme)
   }
 
   state = { playlists: undefined }
@@ -87,19 +89,22 @@ class Layout extends React.Component {
   render() {
     const { styles } = this
     // remove leading #
-    const parsedObj = querystring.parse(this.props.location.hash.substr(1))
-    const token = parsedObj.access_token || null
-    const children = React.cloneElement(this.props.children, {
-      token,
-      setPlaylists: this.setPlaylists,
-      playlists: this.state.playlists,
-      style: styles.mainChildren,
-    })
+    const params = new URLSearchParams(this.props.location.hash.substr(1));
+    const token = params.get('access_token') || null
+    const children = (
+      <Outlet
+        token={token}
+        setPlaylists={this.setPlaylists}
+        playlists={this.state.playlists}
+        style={styles.mainChildren}
+      />
+    )
+
     return (
       <div style={styles.container}>
         <header style={styles.header}>
           <a href="/genify/">
-            <FlatButton label="Genify" style={styles.headerButton} labelStyle={styles.headerButtonLabel} />
+            <Button label="Genify" style={styles.headerButton} labelStyle={styles.headerButtonLabel} />
           </a>
           <a href="https://github.com/tomkel/genify" target="_blank" rel="noreferrer noopener">
             <OctocatIcon style={styles.github} />

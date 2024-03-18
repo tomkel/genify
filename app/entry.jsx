@@ -1,25 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import { minBlack } from 'material-ui/styles/colors'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme'
-import merge from 'lodash/merge'
-import injectTapEventPlugin from 'react-tap-event-plugin'
-import Layout from './components/Layout'
-import AuthButton from './components/AuthButton'
-import Generate from './components/Generate'
-import Save from './components/Save'
-import End from './components/End'
-import log from './log'
+import React from 'react';
+import { createRoot } from "react-dom/client";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import grey from '@material-ui/core/colors/grey';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import AuthButton from './components/AuthButton';
+import End from './components/End';
+import Generate from './components/Generate';
+import Layout from './components/Layout';
+import Save from './components/Save';
+import log from './log';
+//import '@fontsource/roboto/300.css';
+//import '@fontsource/roboto/400.css';
+//import '@fontsource/roboto/500.css';
+//import '@fontsource/roboto/700.css';
 
-process.on('unhandledRejection', (reason, p) => {
-  log.error('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
+window.addEventListener('unhandledrejection', (ev) => {
+  log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
 })
-
-injectTapEventPlugin()
-
 
 const palette = {
   primary1Color: '#3f3f42',
@@ -30,9 +28,10 @@ const palette = {
   alternateTextColor: '#dfe0e6',
   // used in Save.jsx
   cardBackground: '#222326',
+  type: 'dark',
 }
 
-const muiTheme = getMuiTheme(merge({}, darkBaseTheme, {
+const theme = createTheme({
   // black background: #121314
   // lighter black background: #222326
   // muted gray <p> text: #838486
@@ -40,7 +39,7 @@ const muiTheme = getMuiTheme(merge({}, darkBaseTheme, {
   // accent green: #84bd00
   // icon white: #ffffff
   overlay: {
-    backgroundColor: minBlack,
+    backgroundColor: grey['900'],
   },
   palette,
   checkbox: {
@@ -49,27 +48,37 @@ const muiTheme = getMuiTheme(merge({}, darkBaseTheme, {
     boxColor: palette.secondaryTextColor,
   },
   backgroundColor: '#121314',
-}))
+})
 
 const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
 
-class Main extends React.Component {
+const router = createBrowserRouter([
+  { 
+    path: basePath, 
+    element: <Layout />,
+    children: [
+      { path: 'generate', element: <Generate /> },
+      { path: 'save', element: <Save /> },
+      { path: 'end', element: <End /> },
+      { index: true, element: <AuthButton /> },
+    ],
+  },
+])
 
+class Main extends React.Component {
   render() {
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
-        <Router history={browserHistory}>
-          <Route path={basePath} component={Layout}>
-
-            <IndexRoute component={AuthButton} />
-            <Route path="generate" component={Generate} />
-            <Route path="save" component={Save} />
-            <Route path="end" component={End} />
-          </Route>
-        </Router>
-      </MuiThemeProvider>
+      <React.StrictMode>
+        <CssBaseline>
+          <ThemeProvider theme={theme}>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </CssBaseline>
+      </React.StrictMode>
     )
   }
 }
 
-ReactDOM.render(<Main />, document.getElementById('app'))
+const domNode = document.getElementById('app');
+const root = createRoot(domNode);
+root.render(<Main />);

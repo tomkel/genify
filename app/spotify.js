@@ -1,8 +1,6 @@
 import fetchQueue from './fetch-queue'
 import log from './log'
 
-const querystring = require('querystring')
-
 let token
 let userId
 
@@ -27,7 +25,8 @@ function fetchGeneric(url, qs, postData, method) {
   }
   opts.headers = new Headers(headers)
 
-  const qsURL = qs ? `${url}?${querystring.stringify(qs)}` : url
+  const params = new URLSearchParams(qs)
+  const qsURL = qs ? `${url}?${params.toString()}` : url
 
   let tries = 1
 
@@ -121,14 +120,14 @@ function fetchAllTracks() {
 }
 
 
-// maximum 50 IDs
+// maximum 100 IDs
 // result array is in an artists property
 function fetchArtists(ids) {
   return fetchGeneric('https://api.spotify.com/v1/artists', { ids: ids.join() })
 }
 
 function fetchAllArtists(ids) {
-  return fetchManyIds(fetchArtists, ids, 50, 'artists')
+  return fetchManyIds(fetchArtists, ids, 100, 'artists')
 }
 
 // maximum 20 IDs

@@ -1,35 +1,32 @@
-const webpack = require('webpack')
+const webpack = require('webpack'); //to access built-in plugins
+const path = require('path')
 
-const plugins = []
-if (process.env.NODE_ENV) {
-  plugins.push(
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-      },
-    })
-  )
-}
+module.exports = (env, argv) => {
+  console.log('argv.mode is ', argv.mode)
 
-module.exports = {
-  entry: ['babel-polyfill', 'isomorphic-fetch', './app/entry'],
-  output: {
-    path: './dist',
-    filename: 'bundle.js',
-  },
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-  },
-  module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        presets: ['latest', 'react'],
-        plugins: ['transform-class-properties'],
-      },
-    }],
-  },
-  plugins,
+  return {
+    entry: './app/entry',
+    output: {
+      path: path.resolve(__dirname, './dist'),
+      filename: 'bundle.js',
+    },
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    module: {
+      rules: [{
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', { targets: 'defaults' }],
+              ['@babel/preset-react', { development: argv.mode === 'development' }],
+            ],
+          },
+        },
+      }],
+    }
+  }
 }

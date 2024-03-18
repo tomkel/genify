@@ -1,20 +1,18 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
-import Checkbox from 'material-ui/Checkbox'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import ActionDone from 'material-ui/svg-icons/action/done'
-import CircularProgress from 'material-ui/CircularProgress'
-import Overlay from 'material-ui/internal/Overlay'
-import RaisedButton from 'material-ui/RaisedButton'
-import Divider from 'material-ui/Divider'
+import Checkbox from '@mui/material/Checkbox'
+import Button from '@mui/material/Button'
+import DoneIcon from '@mui/material/done'
+import CircularProgress from '@mui/material/CircularProgress'
+import Backdrop from '@mui/material/Backdrop'
+import Divider from '@mui/material/Divider'
 import SaveList from './SaveList'
 import UnselectButton from './UnselectButton'
 import Playlists from '../../playlists'
 import { getUserId } from '../../spotify'
 import { updates as fetchQueue } from '../../fetch-queue'
 import log from '../../log'
-
-const path = require('path')
 
 function getStyles(muiTheme) {
   return {
@@ -64,11 +62,11 @@ function getStyles(muiTheme) {
 export default class Save extends React.Component {
 
   static propTypes = {
-    playlists: React.PropTypes.instanceOf(Playlists),
+    playlists: PropTypes.instanceOf(Playlists),
   }
 
   static contextTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
+    muiTheme: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -108,7 +106,7 @@ export default class Save extends React.Component {
   componentDidUpdate() {
     // give time for the progress bar to show up before saving
     if (this.state.saving) {
-      const nextPath = path.join(this.props.routes[0].path, 'end')
+      const nextPath = this.props.routes[0].path + '/end'
       this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
         .then(() => browserHistory.push(nextPath))
     }
@@ -152,7 +150,7 @@ export default class Save extends React.Component {
     if (this.state.saving) {
       saving = (
         <div>
-          <Overlay show />
+          <Backdrop open />
           <CircularProgress size={2.5} style={styles.progress} />
         </div>
       )
@@ -162,8 +160,8 @@ export default class Save extends React.Component {
       <div style={styles.container}>
         <h1 style={styles.headerText}>Choose your playlists</h1>
         <div style={styles.buttonContainer}>
-          <RaisedButton label="Select All" primary style={styles.button} onClick={this.checkAll} />
-          <RaisedButton label="Select None" primary style={styles.button} onClick={this.uncheckAll} />
+          <Button variant="contained" label="Select All" primary style={styles.button} onClick={this.checkAll} />
+          <Button variant="contained" label="Select None" primary style={styles.button} onClick={this.uncheckAll} />
           <UnselectButton
             action={this.unselect}
             min={2}
@@ -187,9 +185,9 @@ export default class Save extends React.Component {
           numTracksCategorized={this.props.playlists.numTracksCategorized}
         />
 
-        <FloatingActionButton secondary style={styles.doneButton} onClick={this.save}>
-          <ActionDone />
-        </FloatingActionButton>
+        <Button variant="fab" secondary style={styles.doneButton} onClick={this.save}>
+          <DoneIcon />
+        </Button>
         {saving}
       </div>
     )

@@ -1,6 +1,6 @@
 import React from 'react'
-import Checkbox from 'material-ui/Checkbox'
-import { ListItem } from 'material-ui/List'
+import Checkbox from '@mui/material/Checkbox'
+import ListItem from '@mui/material/ListItem'
 
 export default class SaveListItem extends React.Component {
 

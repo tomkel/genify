@@ -1,7 +1,5 @@
 import React from 'react'
-import RaisedButton from 'material-ui/RaisedButton'
-
-const querystring = require('querystring')
+import Button from '@material-ui/core/Button'
 
 const styles = {
   container: {
@@ -28,14 +26,14 @@ function getAuthURL() {
     redirectUrl = 'http://localhost:8080/generate'
   }
 
-  const authParams = {
+  const authParams = new URLSearchParams({
     client_id: '38dfce7a65f84684b6678907870b0cec',
     response_type: 'token',
     redirect_uri: redirectUrl,
     // state: stateString,
     scope: 'playlist-modify-public user-library-read',
-  }
-  return `${authURL}?${querystring.stringify(authParams)}`
+  })
+  return `${authURL}?${authParams.toString()}`
 }
 
 class AuthButton extends React.Component {
@@ -51,7 +49,8 @@ class AuthButton extends React.Component {
           Genify organizes your saved music in Spotify into playlists based on genre.
         </h1>
 
-        <RaisedButton
+        <Button
+          variant="contained"
           label="Click here to get started"
           primary
           onClick={this.authRedirect}

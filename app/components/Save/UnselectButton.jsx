@@ -1,6 +1,7 @@
 import React from 'react'
-import RaisedButton from 'material-ui/RaisedButton'
-import { emphasize } from 'material-ui/utils/colorManipulator'
+import PropTypes from 'prop-types'
+import Button from '@mui/material/Button'
+import { emphasize } from '@mui/material/styles/colorManipulator'
 
 
 function getStyles(muiTheme) {
@@ -22,12 +23,12 @@ export default class UnselectButton extends React.Component {
     min: 2,
   }
   static contextTypes = {
-    muiTheme: React.PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
   }
 
   constructor(props, context) {
     super(props)
-    this.styles = getStyles(context.muiTheme)
+    this.styles = getStyles(context.theme)
   }
 
   state = {
@@ -54,18 +55,21 @@ export default class UnselectButton extends React.Component {
   render() {
     return (
       <div style={Object.assign({}, this.props.style, this.styles.container)}>
-        <RaisedButton
+        <Button
+          variant="contained"
           label="−"
           onClick={this.dec}
           backgroundColor={this.styles.spinner.backgroundColor}
           style={this.styles.spinner}
         />
-        <RaisedButton
+        <Button
+          variant="contained"
           label={`Unselect playlists with less than ${this.state.val} tracks`}
           primary
           onClick={this.doAction}
         />
-        <RaisedButton
+        <Button
+          variant="contained"
           label="+"
           onClick={this.inc}
           backgroundColor={this.styles.spinner.backgroundColor}

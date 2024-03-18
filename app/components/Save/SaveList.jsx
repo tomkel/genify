@@ -1,6 +1,6 @@
 import React from 'react'
-import { List } from 'material-ui/List'
-import Subheader from 'material-ui/Subheader'
+import List from '@mui/material/List'
+import ListSubheader from '@mui/material/ListSubheader'
 import SaveListItem from './SaveListItem'
 
 const styles = {
@@ -33,9 +33,9 @@ export default class SaveList extends React.Component {
     return (
       <List>
         <div>
-          <Subheader>
+          <ListSubheader>
             {this.props.numTracksCategorized}/{this.props.totalTracks} tracks have genre metadata and were categorized into {this.props.playlistArr.length} playlists
-          </Subheader>
+          </ListSubheader>
         </div>
         {listItems}
       </List>
