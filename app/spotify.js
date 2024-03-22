@@ -1,5 +1,5 @@
-import fetchQueue from './fetch-queue'
-import log from './log'
+import fetchQueue from './fetch-queue.js'
+import log from './log.js'
 
 let token
 let userId

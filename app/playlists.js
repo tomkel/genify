@@ -1,6 +1,6 @@
-import Tracks from './tracks'
-import * as spotify from './spotify'
-import log from './log'
+import Tracks from './tracks.js'
+import * as spotify from './spotify.js'
+import log from './log.js'
 
 class Playlists {
 

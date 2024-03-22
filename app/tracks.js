@@ -1,5 +1,5 @@
-import * as spotify from './spotify'
-import log from './log'
+import * as spotify from './spotify.js'
+import log from './log.js'
 
 
 class Tracks {

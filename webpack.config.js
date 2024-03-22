@@ -1,13 +1,13 @@
-const webpack = require('webpack'); //to access built-in plugins
-const path = require('path')
+import webpack from 'webpack' //to access built-in plugins
+import path from 'node:path'
 
-module.exports = (env, argv) => {
+export default (env, argv) => {
   console.log('argv.mode is ', argv.mode)
 
   return {
     entry: './app/entry',
     output: {
-      path: path.resolve(__dirname, './dist'),
+      path: path.resolve('./dist/'),
       filename: 'bundle.js',
     },
     resolve: {
