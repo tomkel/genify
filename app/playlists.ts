@@ -1,6 +1,6 @@
-import Tracks from './tracks.js'
-import * as spotify from './spotify.js'
-import log from './log.js'
+import Tracks from './tracks.ts'
+import * as spotify from './spotify.ts'
+import log from './log.ts'
 
 class Playlists {
 

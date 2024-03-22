@@ -2,7 +2,7 @@
   "name": "genify",
   "version": "1.0.0",
   "description": "Build spotify playlists from saved music based on their type and genre.",
-  "main": "app/main.jsx",
+  "main": "app/entry.tsx",
   "type": "module",
   "scripts": {
     "start": "webpack serve --mode development -d inline-source-map --hot --static app --history-api-fallback",

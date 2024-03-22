@@ -11,7 +11,7 @@ export default (env, argv) => {
       filename: 'bundle.js',
     },
     resolve: {
-      extensions: ['.tsx', '.js', '.jsx'],
+      extensions: ['.tsx', '.ts', '.js'],
     },
     module: {
       rules: [{

@@ -4,12 +4,12 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import grey from '@mui/material/colors/grey';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import AuthButton from './components/AuthButton';
-import End from './components/End';
-import Generate from './components/Generate';
-import Layout from './components/Layout';
-import Save from './components/Save';
-import log from './log';
+import AuthButton from './components/AuthButton.tsx';
+import End from './components/End.tsx';
+import Generate from './components/Generate.tsx';
+import Layout from './components/Layout.tsx';
+import Save from './components/Save/index.ts';
+import log from './log.ts';
 //import '@fontsource/roboto/300.css';
 //import '@fontsource/roboto/400.css';
 //import '@fontsource/roboto/500.css';
@@ -26,7 +26,7 @@ const palette = {
   secondaryTextColor: '#838486',
   // shows up on buttons
   alternateTextColor: '#dfe0e6',
-  // used in Save.jsx
+  // used in Save.tsx
   cardBackground: '#222326',
   type: 'dark',
 }

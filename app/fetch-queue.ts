@@ -1,11 +1,9 @@
-import { EventEmitter } from 'node:events'
-
 const queue = []
 let intervalId
 let currInterval
 let totalRequests = 0
 
-const updates = new EventEmitter()
+const updates = new EventTarget()
 
 function getTotal() {
   return totalRequests
@@ -25,7 +23,7 @@ function process() {
     intervalId = null
     currInterval = 0
     totalRequests = 0
-    updates.emit('done')
+    updates.dispatchEvent(new CustomEvent('done'))
     return
   }
   const req = queue.shift()

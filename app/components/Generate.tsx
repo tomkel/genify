@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
-import Playlists from '../playlists.js'
-import { setToken } from '../spotify.js'
-import log from '../log.js'
+import Playlists from '../playlists.ts'
+import { setToken } from '../spotify.ts'
+import log from '../log.ts'
 import type { LayoutContext } from './Layout.tsx'
 
 const styles = {
