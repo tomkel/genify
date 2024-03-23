@@ -18,9 +18,6 @@ const styles = {
   },
 }
 
-Generate.propTypes = {
-  context: PropTypes.array.isRequired,
-}
 export default function Generate() {
   const [styles, token, setPlaylists]: LayoutContext = useOutletContext()
 

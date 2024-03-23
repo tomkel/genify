@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import grey from '@mui/material/colors/grey';
+import { grey } from '@mui/material/colors';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { PaletteOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import AuthButton from './components/AuthButton.tsx';
 import End from './components/End.tsx';
 import Generate from './components/Generate.tsx';
@@ -19,17 +19,14 @@ window.addEventListener('unhandledrejection', (ev) => {
   log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
 })
 
-const palette = {
-  primary1Color: '#3f3f42',
-  accent1Color: '#84bd00',
-  textColor: '#dfe0e6',
-  secondaryTextColor: '#838486',
-  // shows up on buttons
-  alternateTextColor: '#dfe0e6',
-  // used in Save.tsx
-  cardBackground: '#222326',
-  type: 'dark',
-}
+const palette: PaletteOptions = {}
+palette.primary = { main: '#3f3f42', contrastText: '#dfe0e6' }
+palette.secondary = { main: '#84bd00' }
+palette.text = { primary: '#dfe0e6', secondary: '#838486' }
+// alternateTextColor shows up on buttons
+// cardBackground used in Save.tsx
+palette.mode = 'dark'
+palette.background = { default: '#121314' }
 
 const theme = createTheme({
   // black background: #121314
@@ -38,16 +35,18 @@ const theme = createTheme({
   // bright gray <h> text: #dfe0e6
   // accent green: #84bd00
   // icon white: #ffffff
-  overlay: {
-    backgroundColor: grey['900'],
+  components: {
+    MuiBackdrop: {
+      styleOverrides: { root: { backgroundColor: grey['900'] }},
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        checked: { backgroundColor: palette.secondary.main, },
+        root: { backgroundColor: palette.secondary.main, }, // equal to textColor/alternateTextColor by default
+      },
+    },
   },
   palette,
-  checkbox: {
-    checkedColor: palette.secondaryTextColor,
-    // equal to textColor/alternateTextColor by default
-    boxColor: palette.secondaryTextColor,
-  },
-  backgroundColor: '#121314',
 })
 
 const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
@@ -80,5 +79,6 @@ class Main extends React.Component {
 }
 
 const domNode = document.getElementById('app');
+if (!domNode) throw new Error('no root found')
 const root = createRoot(domNode);
 root.render(<Main />);

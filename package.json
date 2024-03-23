@@ -7,6 +7,8 @@
   "scripts": {
     "start": "webpack serve --mode development -d inline-source-map --hot --static app --history-api-fallback",
     "build": "webpack build --mode production --progress",
+    "start:bun": "NODE_ENV=development bun build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
+    "build:bun": "NODE_ENV=production bun build app/entry.tsx --outfile dist/bundle.js --target browser --minify",
     "deploy": "npm run build && fish deploy.fish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -38,6 +40,8 @@
     "@babel/preset-env": "^7.24.0",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
+    "@types/react": "^18.2.69",
+    "@types/react-dom": "^18.2.22",
     "babel-loader": "9",
     "eslint": "^8.57.0",
     "ts-loader": "^9.5.1",

@@ -1,13 +1,19 @@
 {
     "compilerOptions": {
-        "lib": [ "esnext", "dom" ],
-        // "noImplicitAny": true,
+        "target": "ES2022",
+        "lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+        "allowJs": false,
+        "strict": true,
         "jsx": "react",
-        "allowJs": true,
         "noEmit": true,
         "isolatedModules": true,
-        "module": "nodenext",
+        "module": "ES2022",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+
+        "forceConsistentCasingInFileNames": true,
+        "inlineSourceMap": true
+
     }
 }

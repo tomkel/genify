@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Backdrop from '@mui/material/Backdrop'
 import Divider from '@mui/material/Divider'
 import { useTheme } from '@mui/material/styles'
+import type { Theme } from '@mui/material/styles'
 import SaveList from './SaveList'
 import UnselectButton from './UnselectButton'
 import Playlists from '../../playlists'
@@ -15,13 +16,13 @@ import { getUserId } from '../../spotify'
 import { updates as fetchQueue } from '../../fetch-queue'
 import log from '../../log'
 
-function getStyles(muiTheme) {
+function getStyles(muiTheme: Theme) {
   return {
     container: {
       maxWidth: '40rem',
       margin: '0 auto',
       paddingTop: '0.1rem',
-      backgroundColor: muiTheme.palette.cardBackground,
+      backgroundColor: '#222326',
     },
     progress: {
       margin: 'auto',
