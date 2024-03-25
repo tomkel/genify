@@ -3,8 +3,10 @@ import * as spotify from './spotify.ts'
 import log from './log.ts'
 
 class Playlists {
+  newPlaylists: Map<any, any>
 
   constructor(useDom = false) {
+    this.newPlaylists = new Map()
     if (process.env.NODE_ENV === 'development') {
       if (useDom) {
         log.info('retrieving playlists from DOM')
@@ -17,9 +19,6 @@ class Playlists {
         }
       }
     }
-    if (!this.newPlaylists) {
-      this.newPlaylists = new Map()
-    }
   }
 
   tracks = new Tracks()
@@ -27,7 +26,7 @@ class Playlists {
   totalTracks = () => this.tracks.tracksArr.length
   numTracksCategorized = 0
 
-  createNewPlaylists = (map) => {
+  createNewPlaylists = (map: Map) => {
     log.debug(map)
     const sortedTracks = new Set()
     map.forEach((v) => {

@@ -1,15 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
+import type { Theme } from '@mui/material/styles'
 import { useTheme } from '@mui/material/styles'
 import { emphasize } from '@mui/system/colorManipulator'
+import type Styles from '../Styles'
 
 
-function getStyles(muiTheme) {
+function getStyles(muiTheme: Theme): Styles {
   return {
     spinner: {
       minWidth: '1rem',
-      backgroundColor: emphasize(muiTheme.palette.primary1Color),
+      backgroundColor: emphasize(muiTheme.palette.primary.main),
     },
     container: {
       display: 'inline-block',
@@ -18,66 +20,45 @@ function getStyles(muiTheme) {
   }
 }
 
-export default class UnselectButton extends React.Component {
+type UnselectButtonProps = { min: number, theme: Theme, action: (val: number) => void, style: React.CSSProperties }
 
-  static propTypes = {
-    theme: PropTypes.object.isRequired,
-  }
+UnselectButton.propTypes = {
+  theme: PropTypes.object.isRequired,
+}
+export default function UnselectButton({ min = 2, theme, action, style }: UnselectButtonProps) {
+  const styles = getStyles(theme)
+  const [val, setVal] = useState(2)
 
-  static defaultProps = {
-    min: 2,
-  }
-
-  constructor(props, context) {
-    super(props)
-    this.styles = getStyles(props.theme)
-  }
-
-  state = {
-    val: 2,
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.val !== this.state.val
-  }
-
-  dec = () => {
-    if (this.state.val > this.props.min) {
-      this.setState({ val: this.state.val - 1 })
+  const dec = () => {
+    if (val > min) {
+      setVal(val - 1)
     }
   }
-  inc = () => {
-    this.setState({ val: this.state.val + 1 })
+  const inc = () => {
+    setVal( val + 1 )
   }
 
-  doAction = () => {
-    this.props.action(this.state.val)
+  const doAction = () => {
+    action(val)
   }
 
-  render() {
-    return (
-      <div style={Object.assign({}, this.props.style, this.styles.container)}>
-        <Button
-          variant="contained"
-          label="−"
-          onClick={this.dec}
-          backgroundColor={this.styles.spinner.backgroundColor}
-          style={this.styles.spinner}
-        />
-        <Button
-          variant="contained"
-          label={`Unselect playlists with less than ${this.state.val} tracks`}
-          primary
-          onClick={this.doAction}
-        />
-        <Button
-          variant="contained"
-          label="+"
-          onClick={this.inc}
-          backgroundColor={this.styles.spinner.backgroundColor}
-          style={this.styles.spinner}
-        />
-      </div>
-    )
-  }
+  return (
+    <div style={Object.assign({}, style, styles.container)}>
+      <Button
+        variant="contained"
+        onClick={dec}
+        sx={styles.spinner}
+      >-</Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={doAction}
+      >{`Unselect playlists with less than ${val} tracks`}</Button>
+      <Button
+        variant="contained"
+        onClick={inc}
+        sx={styles.spinner}
+      >+</Button>
+    </div>
+  )
 }

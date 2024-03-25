@@ -7,8 +7,8 @@ import red from '@mui/material/colors/red'
 import type { Theme } from '@mui/material/styles'
 import { useTheme } from '@mui/material/styles'
 import Playlists from '../playlists';
+import type Styles from './Styles'
 
-export type Styles = { [key: string]: React.CSSProperties }
 function getStyles(muiTheme: Theme): Styles {
   return {
     container: {
@@ -18,8 +18,8 @@ function getStyles(muiTheme: Theme): Styles {
       alignItems: 'center',
       justifyContent: 'space-between',
       minHeight: '97vh',
-      backgroundColor: muiTheme.backgroundColor,
-      color: muiTheme.palette.textColor,
+      backgroundColor: muiTheme.palette.background.default,
+      color: muiTheme.palette.text.primary,
     },
     main: {
       flex: 1,
@@ -47,13 +47,13 @@ function getStyles(muiTheme: Theme): Styles {
       height: '1em',
     },
     github: {
-      fill: muiTheme.palette.textColor,
+      fill: muiTheme.palette.text.primary,
       width: '1.5rem',
       height: '1.5rem',
     },
     nameLink: {
       textDecoration: 'none',
-      color: muiTheme.palette.accent1Color,
+      color: muiTheme.palette.primary.contrastText,
     },
   }
 }

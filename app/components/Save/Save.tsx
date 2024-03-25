@@ -15,8 +15,12 @@ import Playlists from '../../playlists'
 import { getUserId } from '../../spotify'
 import { updates as fetchQueue } from '../../fetch-queue'
 import log from '../../log'
+import type Styles from '../Styles'
+import Fab from '@mui/material/Fab'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
-function getStyles(muiTheme: Theme) {
+// @ts-ignore: unused param
+function getStyles(muiTheme: Theme): Styles {
   return {
     container: {
       maxWidth: '40rem',
@@ -60,8 +64,9 @@ function getStyles(muiTheme: Theme) {
   }
 }
 
-
-export default class Save extends React.Component {
+type SaveProps = { theme: Theme, playlists: Playlists } 
+type SaveState = { deleteExistingPlaylists: boolean, saving: boolean, playlistChecked: boolean[] }
+export default class Save extends React.Component<SaveProps, SaveState> {
 
   static propTypes = {
     playlists: PropTypes.instanceOf(Playlists),
@@ -71,20 +76,24 @@ export default class Save extends React.Component {
   static defaultProps = {
     playlists: new Playlists(true),
   }
+  styles: Styles
+  totalTracks: number
+  playlistArr: [unknown, number][]
+  state: Readonly<SaveState>
 
-  constructor(props, context) {
+  constructor(props: SaveProps) {
     super(props)
     getUserId()
     this.styles = getStyles(props.theme)
     this.totalTracks = props.playlists.totalTracks()
 
-    this.playlistArr = Array.from(this.props.playlists.getPlaylistNamesAndSizeMap().entries())
+    this.playlistArr = Array.from(props.playlists.getPlaylistNamesAndSizeMap().entries())
 
     this.state = {
       deleteExistingPlaylists: true,
       saving: false,
       playlistChecked: this.playlistArr.map(curr => curr[1] > 1),
-    }
+    } as SaveState
 
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')
@@ -96,7 +105,7 @@ export default class Save extends React.Component {
     }) */
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(_nextProps: SaveProps, nextState: SaveState) {
     return nextState.playlistChecked !== this.state.playlistChecked ||
       nextState.saving !== this.state.saving ||
       nextState.deleteExistingPlaylists !== this.state.deleteExistingPlaylists
@@ -106,9 +115,8 @@ export default class Save extends React.Component {
     // give time for the progress bar to show up before saving
     if (this.state.saving) {
       const navigate = useNavigate()
-      const nextPath = this.props.routes[0].path + '/end'
       this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
-        .then(() => navigate(nextPath))
+        .then(() => navigate('end'))
     }
   }
 
@@ -116,7 +124,7 @@ export default class Save extends React.Component {
     this.setState({ saving: true })
   }
 
-  unselect = (minTracks) => {
+  unselect = (minTracks: number) => {
     for (let i = 0; i < this.playlistArr.length; i += 1) {
       const numTracks = this.playlistArr[i][1]
       if (numTracks < minTracks) {
@@ -130,7 +138,7 @@ export default class Save extends React.Component {
     }
   }
 
-  updateChecked = (index, checked) => {
+  updateChecked = (index: number, checked: boolean) => {
     const newCheckedArr = this.state.playlistChecked.slice()
     newCheckedArr[index] = checked
     this.setState({ playlistChecked: newCheckedArr })
@@ -160,20 +168,24 @@ export default class Save extends React.Component {
       <div style={styles.container}>
         <h1 style={styles.headerText}>Choose your playlists</h1>
         <div style={styles.buttonContainer}>
-          <Button variant="contained" label="Select All" primary style={styles.button} onClick={this.checkAll} />
-          <Button variant="contained" label="Select None" primary style={styles.button} onClick={this.uncheckAll} />
+          <Button variant="contained" color="primary" style={styles.button} onClick={this.checkAll}>Select All</Button>
+          <Button variant="contained" color="primary" style={styles.button} onClick={this.uncheckAll}>Select None</Button>
           <UnselectButton
             action={this.unselect}
             min={2}
             style={styles.button}
-            theme={theme}
+            theme={this.props.theme}
           />
         </div>
-        <Checkbox
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={this.state.deleteExistingPlaylists}
+              onChange={(_ev, checked) => this.setState({ deleteExistingPlaylists: checked })}
+              style={styles.headerCheckbox}
+            />
+          }
           label="Delete existing Genify playlists"
-          checked={this.state.deleteExistingPlaylists}
-          onCheck={(ev, checked) => this.setState({ deleteExistingPlaylists: checked })}
-          style={styles.headerCheckbox}
         />
 
         <Divider />
@@ -186,9 +198,9 @@ export default class Save extends React.Component {
           numTracksCategorized={this.props.playlists.numTracksCategorized}
         />
 
-        <Button variant="fab" secondary style={styles.doneButton} onClick={this.save}>
+        <Fab color="secondary" style={styles.doneButton} onClick={this.save}>
           <DoneIcon />
-        </Button>
+        </Fab>
         {saving}
       </div>
     )

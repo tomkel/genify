@@ -2,21 +2,22 @@ import * as spotify from './spotify.ts'
 import log from './log.ts'
 
 
+type TrackIdsAndGenres = { tracks: string[], genres: string[] }
 class Tracks {
 
   tracksArr = []
 
-  artistIDs = new Set()
+  artistIDs: Set<string> = new Set()
   // key: artist ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
-  artistMap = new Map()
+  artistMap: Map<string, TrackIdsAndGenres> = new Map()
 
-  albumIDs = new Set()
+  albumIDs: Set<string> = new Set()
   // key: album ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
-  albumMap = new Map()
+  albumMap: Map<string, TrackIdsAndGenres> = new Map()
 
   /**
    * returns a promise with artistMap parameter

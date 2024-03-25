@@ -2,14 +2,28 @@ import React from 'react'
 import List from '@mui/material/List'
 import ListSubheader from '@mui/material/ListSubheader'
 import SaveListItem from './SaveListItem'
+import Styles from '../Styles'
 
-const styles = {
+const styles: Styles = {
   playlist: {
     marginLeft: '8%',
   },
 }
 
-export default class SaveList extends React.Component {
+type SaveListProps = { 
+  checkedArr: boolean[],
+  updateChecked: (index: number, checked: boolean) => void,
+  playlistArr:
+  totalTracks:
+  numTracksCategorized:
+}
+
+          checkedArr={this.state.playlistChecked}
+          updateChecked={this.updateChecked}
+          playlistArr={this.playlistArr}
+          totalTracks={this.totalTracks}
+          numTracksCategorized={this.props.playlists.numTracksCategorized}
+export default class SaveList extends React.Component<SaveListProps> {
 
   shouldComponentUpdate(nextProps) {
     return nextProps.checkedArr !== this.props.checkedArr

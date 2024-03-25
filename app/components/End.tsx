@@ -1,6 +1,7 @@
 import React from 'react'
+import type Styles from './Styles'
 
-const styles = {
+const styles: Styles = {
   container: {
     maxWidth: '40rem',
     margin: '0 auto',
