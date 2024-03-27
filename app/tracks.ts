@@ -1,5 +1,5 @@
-import * as spotify from './spotify.ts'
-import log from './log.ts'
+import * as spotify from './spotify'
+import log from './log'
 import type { Album, Artist, SavedTrack } from '@spotify/web-api-ts-sdk'
 
 

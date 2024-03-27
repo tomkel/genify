@@ -1,6 +1,6 @@
-import Tracks, { TrackIdsAndGenres } from './tracks.ts'
-import * as spotify from './spotify.ts'
-import log from './log.ts'
+import Tracks, { TrackIdsAndGenres } from './tracks'
+import * as spotify from './spotify'
+import log from './log'
 
 class Playlists {
   newPlaylists: Map<string, string[]>

@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import red from '@mui/material/colors/red'
 import type { Theme } from '@mui/material/styles'
 import { useTheme } from '@mui/material/styles'
-import Playlists from '../playlists.ts';
+import Playlists from '../playlists';
 import type Styles from './Styles.d.ts'
 
 function getStyles(muiTheme: Theme): Styles {

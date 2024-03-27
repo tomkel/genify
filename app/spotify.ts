@@ -1,6 +1,6 @@
 import type { User, Page, Artist, Track, MaxInt, FollowedArtists, Market, SavedAlbum, SimplifiedAudiobook, SimplifiedPlaylist, SavedEpisode, SavedShow, SavedTrack, UserProfile, Album, Playlist, TrackItem, SnapshotReference, Albums, Artists } from '@spotify/web-api-ts-sdk'
-import fetchQueue from './fetch-queue.ts'
-import log from './log.ts'
+import fetchQueue from './fetch-queue'
+import log from './log'
 
 let token: string = ''
 let userId: string = ''

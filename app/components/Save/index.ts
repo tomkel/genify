@@ -1,2 +1,2 @@
-import Save from './Save.tsx'
+import Save from './Save'
 export default Save
