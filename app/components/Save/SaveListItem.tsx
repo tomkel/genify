@@ -1,41 +1,37 @@
 import React from 'react'
-import Checkbox from '@mui/material/Checkbox'
+import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import ListItem from '@mui/material/ListItem'
+import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 
-export default class SaveListItem extends React.Component {
+type SaveListItemProps = {
+  primaryText: string,
+  secondaryText: string,
+  style: React.CSSProperties,
+  onCheck: CheckboxProps['onChange'],
+  checked: boolean,
+}
+export default class SaveListItem extends React.Component<SaveListItemProps> {
 
-  state = {
-    checked: this.props.checked,
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ checked: nextProps.checked })
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.checked !== this.state.checked
-  }
-
-  updateCheck = (ev, checked) => {
-    this.setState({ checked })
+  shouldComponentUpdate(nextProps: SaveListItemProps) {
+    return nextProps.checked !== this.props.checked
   }
 
   render() {
-    const { primaryText, secondaryText, style, onCheck } = this.props
+    const { primaryText, secondaryText, style, onCheck, checked } = this.props
 
-    const checkbox = (
-      <Checkbox
-        checked={this.state.checked}
-        onCheck={onCheck}
-      />
-    )
     return (
-      <ListItem
-        primaryText={primaryText}
-        secondaryText={secondaryText}
-        style={style}
-        leftCheckbox={checkbox}
-      />
+      <ListItem sx={style} >
+        <ListItemButton>
+          <ListItemIcon>
+            <Checkbox
+              edge="start"
+              checked={checked}
+              onChange={onCheck}
+            />
+          </ListItemIcon>
+          <ListItemText primary={primaryText} secondary={secondaryText} />
+        </ListItemButton>
+      </ListItem>
     )
   }
 }

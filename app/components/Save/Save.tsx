@@ -78,7 +78,7 @@ export default class Save extends React.Component<SaveProps, SaveState> {
   }
   styles: Styles
   totalTracks: number
-  playlistArr: [unknown, number][]
+  playlistArr: [string, number][]
   state: Readonly<SaveState>
 
   constructor(props: SaveProps) {
@@ -93,7 +93,7 @@ export default class Save extends React.Component<SaveProps, SaveState> {
       deleteExistingPlaylists: true,
       saving: false,
       playlistChecked: this.playlistArr.map(curr => curr[1] > 1),
-    } as SaveState
+    } satisfies SaveState
 
     /* fetchQueue.on('update', (doneRequests, totalRequests) => {
       console.log('update received')

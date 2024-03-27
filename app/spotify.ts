@@ -1,4 +1,4 @@
-import type { User, Page, Artist, Track, MaxInt, FollowedArtists, Market, SavedAlbum, SimplifiedAudiobook, SimplifiedPlaylist, SavedEpisode, SavedShow, SavedTrack, UserProfile, Album, Playlist, TrackItem, SnapshotReference } from '@spotify/web-api-ts-sdk'
+import type { User, Page, Artist, Track, MaxInt, FollowedArtists, Market, SavedAlbum, SimplifiedAudiobook, SimplifiedPlaylist, SavedEpisode, SavedShow, SavedTrack, UserProfile, Album, Playlist, TrackItem, SnapshotReference, Albums, Artists } from '@spotify/web-api-ts-sdk'
 import fetchQueue from './fetch-queue.ts'
 import log from './log.ts'
 
@@ -123,28 +123,28 @@ function fetchTracks(offset: number): Promise<Page<SavedTrack>> {
   return fetchGeneric<Page<SavedTrack>>('https://api.spotify.com/v1/me/tracks', { limit: 50, offset })
 }
 
-function fetchAllTracks() {
+function fetchAllTracks(): Promise<SavedTrack[]> {
   return fetchManyUnknownSize(fetchTracks)
 }
 
 
 // maximum 100 IDs
 // result array is in an artists property
-function fetchArtists(ids: string[]): Promise<Artist[]> {
-  return fetchGeneric<Artist[]>('https://api.spotify.com/v1/artists', { ids })
+function fetchArtists(ids: string[]): Promise<Artists> {
+  return fetchGeneric<Artists>('https://api.spotify.com/v1/artists', { ids })
 }
 
-function fetchAllArtists(ids: Set<string>) {
+function fetchAllArtists(ids: Set<string>): Promise<Artist[]> {
   return fetchManyIds(fetchArtists, ids, 100, 'artists')
 }
 
 // maximum 20 IDs
 // result array is in an albums property
-function fetchAlbums(ids: string[]): Promise<Album[]> {
-  return fetchGeneric<Album[]>('https://api.spotify.com/v1/albums', { ids })
+function fetchAlbums(ids: string[]): Promise<Albums> {
+  return fetchGeneric<Albums>('https://api.spotify.com/v1/albums', { ids })
 }
 
-function fetchAllAlbums(ids: Set<string>) {
+function fetchAllAlbums(ids: Set<string>): Promise<Album[]> {
   return fetchManyIds(fetchAlbums, ids, 20, 'albums')
 }
 
@@ -175,7 +175,7 @@ function getPlaylists(offset: number) {
   return fetchGeneric<Page<SimplifiedPlaylist>>('https://api.spotify.com/v1/me/playlists', { limit: 50, offset })
 }
 
-function getAllPlaylists() {
+function getAllPlaylists(): Promise<SimplifiedPlaylist[]> {
   return fetchManyUnknownSize(getPlaylists)
 }
 

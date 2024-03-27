@@ -3,6 +3,7 @@ import List from '@mui/material/List'
 import ListSubheader from '@mui/material/ListSubheader'
 import SaveListItem from './SaveListItem'
 import Styles from '../Styles'
+import type { CheckboxProps } from '@mui/material/Checkbox/Checkbox.d.ts'
 
 const styles: Styles = {
   playlist: {
@@ -13,36 +14,37 @@ const styles: Styles = {
 type SaveListProps = { 
   checkedArr: boolean[],
   updateChecked: (index: number, checked: boolean) => void,
-  playlistArr:
-  totalTracks:
-  numTracksCategorized:
+  playlistArr: [string, number][],
+  totalTracks: number,
+  numTracksCategorized: number,
 }
-
-          checkedArr={this.state.playlistChecked}
-          updateChecked={this.updateChecked}
-          playlistArr={this.playlistArr}
-          totalTracks={this.totalTracks}
-          numTracksCategorized={this.props.playlists.numTracksCategorized}
 export default class SaveList extends React.Component<SaveListProps> {
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: SaveListProps) {
     return nextProps.checkedArr !== this.props.checkedArr
   }
 
-  updateCheckedArr = this.props.playlistArr.map((curr, i) =>
-      (ev, checked) => this.props.updateChecked(i, checked))
+  updateCheckedArr = this.props.playlistArr.map((_curr, i) => {
+    const checkboxChange: CheckboxProps['onChange'] =
+      (_ev: React.ChangeEvent<HTMLInputElement>, checked: boolean) => 
+        this.props.updateChecked(i, checked) 
+    return checkboxChange
+  })
 
   render() {
-    const listItems = this.props.checkedArr.map((curr, i) => (
-      <SaveListItem
-        key={`li${i}`}
-        style={styles.playlist}
-        primaryText={this.props.playlistArr[i][0]}
-        secondaryText={`${this.props.playlistArr[i][1]} tracks`}
-        checked={this.props.checkedArr[i]}
-        onCheck={this.updateCheckedArr[i]}
-      />
-    ))
+    const listItems = this.props.checkedArr.map((curr, i) => {
+      const currPlaylist = this.props.playlistArr[i]
+      return (
+        <SaveListItem
+          key={`li${i}`}
+          style={styles.playlist}
+          primaryText={currPlaylist[0]}
+          secondaryText={`${currPlaylist[1]} tracks`}
+          checked={curr}
+          onCheck={this.updateCheckedArr[i]}
+        />
+      )
+    })
 
     return (
       <List>

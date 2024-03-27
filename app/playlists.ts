@@ -1,9 +1,9 @@
-import Tracks from './tracks.ts'
+import Tracks, { TrackIdsAndGenres } from './tracks.ts'
 import * as spotify from './spotify.ts'
 import log from './log.ts'
 
 class Playlists {
-  newPlaylists: Map<any, any>
+  newPlaylists: Map<string, string[]>
 
   constructor(useDom = false) {
     this.newPlaylists = new Map()
@@ -26,7 +26,7 @@ class Playlists {
   totalTracks = () => this.tracks.tracksArr.length
   numTracksCategorized = 0
 
-  createNewPlaylists = (map: Map) => {
+  createNewPlaylists = (map: Map<string, TrackIdsAndGenres>) => {
     log.debug(map)
     const sortedTracks = new Set()
     map.forEach((v) => {
@@ -35,7 +35,9 @@ class Playlists {
         v.genres.forEach((g) => {
           v.tracks.forEach((t) => {
             if (this.newPlaylists.has(g)) {
-              this.newPlaylists.get(g).push(t)
+              const trackArr = this.newPlaylists.get(g)
+              if (!trackArr) throw new Error('trackArr undefined somehow')
+              trackArr.push(t)
             } else {
               this.newPlaylists.set(g, [t])
             }
@@ -68,7 +70,7 @@ class Playlists {
         return newPlaylists
       })
 
-  saveSpotifyPlaylists = (playlistsToSave) => {
+  saveSpotifyPlaylists = (playlistsToSave: boolean[]) => {
     const promises = []
     const playlistArr = Array.from(this.newPlaylists)
     for (let i = 0; i < playlistsToSave.length; i += 1) {
@@ -86,7 +88,7 @@ class Playlists {
   }
 
  // returns an array of ids that match the regex parameter
-  getMatchedSpotifyPlaylists = match =>
+  getMatchedSpotifyPlaylists = (match: RegExp) =>
     spotify.getAllPlaylists().then(playlists =>
       playlists.filter(item => match.test(item.name)).map(item => item.id)
     )
@@ -99,7 +101,7 @@ class Playlists {
       })
 
   // playlistsToSave is a boolean array
-  save = (playlistsToSave, deleteFirst) => {
+  save = (playlistsToSave: boolean[], deleteFirst: boolean) => {
     log.info('saving')
     if (deleteFirst) {
       return this.unfollowSpotifyPlaylists()
@@ -109,8 +111,8 @@ class Playlists {
   }
 
   getPlaylistNamesAndSizeMap = () => {
-    const newMap = new Map(this.newPlaylists)
-    newMap.forEach((value, key, map) => map.set(key, value.length))
+    const newMap: Map<string, number> = new Map()
+    this.newPlaylists.forEach((value, key) => newMap.set(key, value.length))
     return newMap
   }
 }
