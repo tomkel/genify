@@ -116,7 +116,7 @@ export default class Save extends React.Component<SaveProps, SaveState> {
     if (this.state.saving) {
       const navigate = useNavigate()
       this.props.playlists.save(this.state.playlistChecked, this.state.deleteExistingPlaylists)
-        .then(() => navigate('end'))
+        .then(() => navigate('/end'))
     }
   }
 

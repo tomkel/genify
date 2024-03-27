@@ -41,8 +41,10 @@ const theme = createTheme({
     },
     MuiCheckbox: {
       styleOverrides: {
-        checked: { backgroundColor: palette.secondary.main, },
-        root: { backgroundColor: palette.secondary.main, }, // equal to textColor/alternateTextColor by default
+        root: {
+          backgroundColor: palette.secondary.main, // equal to textColor/alternateTextColor by default
+          '&Mui.checked': { backgroundColor: palette.secondary.main, },
+         },
       },
     },
   },

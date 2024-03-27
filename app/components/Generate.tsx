@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Playlists from '../playlists'
-import { setToken } from '../spotify'
 import log from '../log'
 import type { LayoutContext } from './Layout'
+import { setToken as spotifySetToken } from '../spotify'
 
 const styles = {
   progress: {
@@ -18,19 +18,35 @@ const styles = {
   },
 }
 
+function useGetToken(): string {
+  const [stateToken, localSetToken] = useState<string>('')
+  if (stateToken) return stateToken
+
+  const location = useLocation()
+  console.log('location hash', location.hash)
+    // remove leading #
+  const params = new URLSearchParams(location.hash.substring(1));
+  const hashToken = params.get('access_token') || ''
+  if (hashToken) {
+    spotifySetToken(hashToken)
+    localSetToken(hashToken)
+  }
+  return hashToken
+}
+
 export default function Generate() {
-  const [styles, token, setPlaylists]: LayoutContext = useOutletContext()
+  const [styles, setPlaylists]: LayoutContext = useOutletContext()
+  const navigate = useNavigate()
+  const token = useGetToken()
 
   useEffect(() => {
-    if (!token) return
-    const navigate = useNavigate()
-    setToken(token)
+    if (!token) throw new Error('didnt get token')
+
     const playlists = new Playlists(false)
     setPlaylists(playlists)
     playlists.gen()
-      .then(() => navigate('save'))
-    
-  }, [token])
+      .then(() => navigate('/save'))
+  }, [])
 
   if (!token) {
     return <h1>{'There was an error with authentication'}</h1>

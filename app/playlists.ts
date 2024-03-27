@@ -28,7 +28,7 @@ class Playlists {
 
   createNewPlaylists = (map: Map<string, TrackIdsAndGenres>) => {
     log.debug(map)
-    const sortedTracks = new Set()
+    const sortedTracks = new Set<string>()
     map.forEach((v) => {
       try {
         // organize by genre

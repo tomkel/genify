@@ -76,7 +76,7 @@ async function getUserId(): Promise<string> {
 
 type BaseFuncIds = (ids: string[]) => Promise<Record<string, any>>
 // baseFunc has an ids paremeter, which is an array of ids
-function fetchManyIds(baseFunc: BaseFuncIds, ids: Set<string>, numAtATime: MaxInt<100>, property: string): Promise<any[]> {
+function fetchManyIds(baseFunc: BaseFuncIds, ids: Set<string>, numAtATime: MaxInt<50>, property: string): Promise<any[]> {
   const promises: Promise<object>[] = []
   const idArr = Array.from(ids)
   let items: any[] = []
@@ -128,14 +128,14 @@ function fetchAllTracks(): Promise<SavedTrack[]> {
 }
 
 
-// maximum 100 IDs
+// maximum 50 IDs
 // result array is in an artists property
 function fetchArtists(ids: string[]): Promise<Artists> {
   return fetchGeneric<Artists>('https://api.spotify.com/v1/artists', { ids })
 }
 
 function fetchAllArtists(ids: Set<string>): Promise<Artist[]> {
-  return fetchManyIds(fetchArtists, ids, 100, 'artists')
+  return fetchManyIds(fetchArtists, ids, 50, 'artists')
 }
 
 // maximum 20 IDs
