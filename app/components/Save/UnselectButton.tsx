@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import Button from '@mui/material/Button'
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { emphasize } from '@mui/system/colorManipulator'
 import type Styles from '../Styles'
-
 
 function getStyles(muiTheme: Theme): Styles {
   return {
@@ -19,15 +18,19 @@ function getStyles(muiTheme: Theme): Styles {
   }
 }
 
-type UnselectButtonProps = { min: number, unselectAction: (minTracks: number) => void, style: React.CSSProperties }
+interface UnselectButtonProps {
+  min: number
+  unselectAction: (minTracks: number) => void
+  style: React.CSSProperties
+}
 export default function UnselectButton({ min = 2, unselectAction, style }: UnselectButtonProps) {
   const theme = useTheme()
   const styles = getStyles(theme)
   const [val, setVal] = useState(2)
 
   const dec = () => { if (val > min) setVal(val - 1) }
-  const inc = () => setVal( val + 1 )
-  const doAction = () => unselectAction(val)
+  const inc = () => { setVal(val + 1) }
+  const doAction = () => { unselectAction(val) }
 
   return (
     <div style={Object.assign({}, style, styles.container)}>

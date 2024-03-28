@@ -1,6 +1,6 @@
 const queue: Array<() => Promise<unknown>> = []
-let intervalId: number = 0
-let currInterval: number = 0
+let intervalId = 0
+let currInterval = 0
 let totalRequests = 0
 
 const updates = new EventTarget()
@@ -30,7 +30,7 @@ function process() {
   }
   const req = queue.shift()
   if (!req) throw new Error('queue was empty somehow')
-  req()
+  void req()
   emitUpdate()
 }
 

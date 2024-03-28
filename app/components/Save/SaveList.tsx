@@ -11,12 +11,12 @@ const styles: Styles = {
   },
 }
 
-type SaveListProps = { 
-  checkedArr: boolean[],
-  updateChecked: (index: number, checked: boolean) => void,
-  playlistArr: [string, number][],
-  totalTracks: number,
-  numTracksCategorized: number,
+interface SaveListProps {
+  checkedArr: boolean[]
+  updateChecked: (index: number, checked: boolean) => void
+  playlistArr: Array<[string, number]>
+  totalTracks: number
+  numTracksCategorized: number
 }
 export default class SaveList extends React.Component<SaveListProps> {
 
@@ -26,8 +26,9 @@ export default class SaveList extends React.Component<SaveListProps> {
 
   updateCheckedArr = this.props.playlistArr.map((_curr, i) => {
     const checkboxChange: CheckboxProps['onChange'] =
-      (_ev: React.ChangeEvent<HTMLInputElement>, checked: boolean) => 
-        this.props.updateChecked(i, checked) 
+      (_ev: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        this.props.updateChecked(i, checked)
+      }
     return checkboxChange
   })
 

@@ -1,6 +1,7 @@
-// @ts-check
+// @ts-nocheck
 
 import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin'
 import tseslint from 'typescript-eslint';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js'
 import hooksPlugin from 'eslint-plugin-react-hooks'
@@ -10,10 +11,22 @@ export default tseslint.config(
     ignores: ["*.js"],
   },
   eslint.configs.recommended,
-  // { rules: { semi: ["error", "always"] }},
-  ...tseslint.configs.recommended,
-  // ...tseslint.configs.recommendedTypeChecked,
-  // ...tseslint.configs.stylisticTypeChecked,
+  // stylistic.configs.customize({ quoteProps: 'as-needed' }),
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  {
+    rules: {
+      "@typescript-eslint/array-type": ["error", { default: 'array-simple' }],
+      '@typescript-eslint/restrict-template-expressions': ['error', {
+        allowAny: false,
+        allowBoolean: false,
+        allowNullish: false,
+        allowNumber: true,
+        allowRegExp: false,
+        allowNever: false,
+      }],
+    }
+  },
   {
     languageOptions: {
       parserOptions: {

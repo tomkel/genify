@@ -56,15 +56,15 @@ const styles: Styles = {
   },
 }
 
-const falseArr = (size: number) => {
-  return Array(size).fill(false)
+const falseArr = (size: number): boolean[] => {
+  return Array<boolean>(size).fill(false)
 }
-const trueArr = (size: number) => {
-  return Array(size).fill(true)
+const trueArr = (size: number): boolean[] => {
+  return Array<boolean>(size).fill(true)
 }
 
 export default function Save() {
-  const [, playlists, ]: LayoutContext = useOutletContext()
+  const [, playlists]: LayoutContext = useOutletContext()
   if (!playlists) throw new Error('expected playlists')
 
   const totalTracks = playlists.totalTracks()
@@ -80,8 +80,8 @@ export default function Save() {
   useEffect(() => {
     // give time for the progress bar to show up before saving
     if (!saving) throw new Error('expected to be saving')
-    playlists.save(playlistChecked, deleteExistingPlaylists)
-      .then(() => navigate('/end'))
+    void playlists.save(playlistChecked, deleteExistingPlaylists)
+      .then(() => { navigate('/end') })
   }, [saving])
 
   const updateCheckedItem = (index: number, checked: boolean) => {
@@ -103,8 +103,8 @@ export default function Save() {
     }
   }
 
-  const checkAll = () => setPlaylistChecked(trueArr(playlistChecked.length))
-  const uncheckAll = () => setPlaylistChecked(falseArr(playlistChecked.length))
+  const checkAll = () => { setPlaylistChecked(trueArr(playlistChecked.length)) }
+  const uncheckAll = () => { setPlaylistChecked(falseArr(playlistChecked.length)) }
 
   const savingMarkup = saving ? (
     <div>
@@ -126,13 +126,13 @@ export default function Save() {
         />
       </div>
       <FormControlLabel
-        control={
+        control={(
           <Checkbox
             checked={deleteExistingPlaylists}
-            onChange={() => setDeleteExisting(prev => !prev)}
+            onChange={() => { setDeleteExisting(prev => !prev) }}
             sx={styles.headerCheckbox}
           />
-        }
+        )}
         label="Delete existing Genify playlists"
       />
 
@@ -146,7 +146,7 @@ export default function Save() {
         numTracksCategorized={playlists.numTracksCategorized}
       />
 
-      <Fab color="secondary" sx={styles.doneButton} onClick={() => setSaving(true)}>
+      <Fab color="secondary" sx={styles.doneButton} onClick={() => { setSaving(true) }}>
         <DoneIcon />
       </Fab>
       {savingMarkup}

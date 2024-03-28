@@ -39,7 +39,7 @@ function getAuthURL() {
 }
 
 const authRedirect = () => {
-    document.location.assign(getAuthURL())
+  document.location.assign(getAuthURL())
 }
 
 export default function AuthButton() {

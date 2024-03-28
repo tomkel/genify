@@ -13,7 +13,8 @@ class Playlists {
         const storedPlaylists = sessionStorage.getItem('playlists')
         if (storedPlaylists) {
           log.info('creating playlist object')
-          this.newPlaylists = new Map(JSON.parse(storedPlaylists))
+          const parsedPlaylists = JSON.parse(storedPlaylists) as Array<[string, string[]]>
+          this.newPlaylists = new Map(parsedPlaylists)
         } else {
           log.info('no playlists found in DOM')
         }
@@ -52,23 +53,21 @@ class Playlists {
     this.numTracksCategorized = sortedTracks.size
     // maps are iterated by insertion order
     // reorder map by array size descending
-    this.newPlaylists = new Map([...this.newPlaylists.entries()].sort((a, b) =>
-      b[1].length - a[1].length
-    ))
+    this.newPlaylists = new Map([...this.newPlaylists.entries()].sort((a, b) => b[1].length - a[1].length))
     log.info(this.newPlaylists)
     return this.newPlaylists
   }
 
   gen = () => this.tracks.collect()
-      .then(this.tracks.mapArtists)
-      .then(this.createNewPlaylists)
-      .then((newPlaylists) => {
-        if (process.env.NODE_ENV === 'development') {
-          log.info('storing playlists in DOM')
-          sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
-        }
-        return newPlaylists
-      })
+    .then(this.tracks.mapArtists)
+    .then(this.createNewPlaylists)
+    .then((newPlaylists) => {
+      if (process.env.NODE_ENV === 'development') {
+        log.info('storing playlists in DOM')
+        sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+      }
+      return newPlaylists
+    })
 
   saveSpotifyPlaylists = (playlistsToSave: boolean[]) => {
     const promises = []
@@ -79,15 +78,15 @@ class Playlists {
         const trackIds = playlistArr[i][1]
         promises.push(
           spotify.createPlaylist(name)
-          .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
-          .then(() => log.info('Created', name))
+            .then(playlistId => spotify.addTracksToPlaylist(trackIds, playlistId))
+            .then(() => { log.info('Created', name) })
         )
       }
     }
     return Promise.all(promises)
   }
 
- // returns an array of ids that match the regex parameter
+  // returns an array of ids that match the regex parameter
   getMatchedSpotifyPlaylists = (match: RegExp) =>
     spotify.getAllPlaylists().then(playlists =>
       playlists.filter(item => match.test(item.name)).map(item => item.id)
@@ -95,8 +94,8 @@ class Playlists {
 
   unfollowSpotifyPlaylists = () =>
     this.getMatchedSpotifyPlaylists(/\[.*?genify.*?\]/)
-      .then((matched) => {
-        matched.forEach(spotify.unfollowPlaylist)
+      .then(async (matched) => {
+        await Promise.all(matched.map(spotify.unfollowPlaylist))
         log.info(matched.length, 'playlists cleared')
       })
 
@@ -111,7 +110,7 @@ class Playlists {
   }
 
   getPlaylistNamesAndSizeMap = () => {
-    const newMap: Map<string, number> = new Map()
+    const newMap = new Map<string, number>()
     this.newPlaylists.forEach((value, key) => newMap.set(key, value.length))
     return newMap
   }

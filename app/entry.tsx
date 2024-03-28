@@ -1,19 +1,19 @@
-import React from 'react';
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { grey } from '@mui/material/colors';
-import CssBaseline from '@mui/material/CssBaseline';
-import { PaletteOptions, ThemeProvider, createTheme } from '@mui/material/styles';
-import AuthButton from './components/AuthButton';
-import End from './components/End';
-import Generate from './components/Generate';
-import Layout from './components/Layout';
-import Save from './components/Save/index';
-import log from './log';
-//import '@fontsource/roboto/300.css';
-//import '@fontsource/roboto/400.css';
-//import '@fontsource/roboto/500.css';
-//import '@fontsource/roboto/700.css';
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { grey } from '@mui/material/colors'
+import CssBaseline from '@mui/material/CssBaseline'
+import { PaletteOptions, ThemeProvider, createTheme } from '@mui/material/styles'
+import AuthButton from './components/AuthButton'
+import End from './components/End'
+import Generate from './components/Generate'
+import Layout from './components/Layout'
+import Save from './components/Save/index'
+import log from './log'
+// import '@fontsource/roboto/300.css'
+// import '@fontsource/roboto/400.css'
+// import '@fontsource/roboto/500.css'
+// import '@fontsource/roboto/700.css'
 
 window.addEventListener('unhandledrejection', (ev) => {
   log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
@@ -37,14 +37,14 @@ const theme = createTheme({
   // icon white: #ffffff
   components: {
     MuiBackdrop: {
-      styleOverrides: { root: { backgroundColor: grey['900'] }},
+      styleOverrides: { root: { backgroundColor: grey['900'] } },
     },
     MuiCheckbox: {
       styleOverrides: {
         root: {
           backgroundColor: palette.secondary.main, // equal to textColor/alternateTextColor by default
-          '&Mui.checked': { backgroundColor: palette.secondary.main, },
-         },
+          '&Mui.checked': { backgroundColor: palette.secondary.main },
+        },
       },
     },
   },
@@ -54,9 +54,9 @@ const theme = createTheme({
 const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
 
 const router = createBrowserRouter([
-  { 
-    path: basePath, 
-    element: <Layout theme={theme}/>,
+  {
+    path: basePath,
+    element: <Layout theme={theme} />,
     children: [
       { path: 'generate', element: <Generate /> },
       { path: 'save', element: <Save /> },
@@ -80,7 +80,7 @@ class Main extends React.Component {
   }
 }
 
-const domNode = document.getElementById('app');
+const domNode = document.getElementById('app')
 if (!domNode) throw new Error('no root found')
-const root = createRoot(domNode);
-root.render(<Main />);
+const root = createRoot(domNode)
+root.render(<Main />)

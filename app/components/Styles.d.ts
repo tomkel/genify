@@ -1,2 +1,2 @@
-declare type Styles = { [key: string]: React.CSSProperties }
+declare type Styles = Record<string, React.CSSProperties>
 export default Styles

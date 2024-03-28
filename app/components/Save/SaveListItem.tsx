@@ -3,12 +3,12 @@ import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import ListItem from '@mui/material/ListItem'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 
-type SaveListItemProps = {
-  primaryText: string,
-  secondaryText: string,
-  style: React.CSSProperties,
-  onCheck: CheckboxProps['onChange'],
-  checked: boolean,
+interface SaveListItemProps {
+  primaryText: string
+  secondaryText: string
+  style: React.CSSProperties
+  onCheck: CheckboxProps['onChange']
+  checked: boolean
 }
 export default class SaveListItem extends React.Component<SaveListItemProps> {
 
@@ -20,7 +20,7 @@ export default class SaveListItem extends React.Component<SaveListItemProps> {
     const { primaryText, secondaryText, style, onCheck, checked } = this.props
 
     return (
-      <ListItem sx={style} >
+      <ListItem sx={style}>
         <ListItemButton>
           <ListItemIcon>
             <Checkbox

@@ -22,9 +22,9 @@ function useGetToken(): string {
   if (stateToken) return stateToken
 
   console.log('location hash', location.hash)
-    // remove leading #
-  const params = new URLSearchParams(location.hash.substring(1));
-  const hashToken = params.get('access_token') || ''
+  // remove leading #
+  const params = new URLSearchParams(location.hash.substring(1))
+  const hashToken = params.get('access_token') ?? ''
   if (hashToken) {
     spotifySetToken(hashToken)
     localSetToken(hashToken)
@@ -42,12 +42,12 @@ export default function Generate() {
 
     const playlists = new Playlists(false)
     setPlaylists(playlists)
-    playlists.gen()
-      .then(() => navigate('/save'))
+    void playlists.gen()
+      .then(() => { navigate('/save') })
   }, [])
 
   if (!token) {
-    return <h1>{'There was an error with authentication'}</h1>
+    return <h1>There was an error with authentication</h1>
   }
 
   return (

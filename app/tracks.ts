@@ -3,22 +3,25 @@ import log from './log'
 import type { Album, Artist, SavedTrack } from '@spotify/web-api-ts-sdk'
 
 
-export type TrackIdsAndGenres = { tracks: string[], genres: string[] }
+export interface TrackIdsAndGenres {
+  tracks: string[]
+  genres: string[]
+}
 class Tracks {
 
   tracksArr: SavedTrack[] = []
 
-  artistIDs: Set<string> = new Set()
+  artistIDs = new Set<string>()
   // key: artist ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
-  artistMap: Map<string, TrackIdsAndGenres> = new Map()
+  artistMap = new Map<string, TrackIdsAndGenres>()
 
-  albumIDs: Set<string> = new Set()
+  albumIDs = new Set<string>()
   // key: album ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
-  albumMap: Map<string, TrackIdsAndGenres> = new Map()
+  albumMap = new Map<string, TrackIdsAndGenres>()
 
   /**
    * returns a promise with artistMap parameter
@@ -29,17 +32,17 @@ class Tracks {
     let populated = 0
 
     const mapArtistGenres = (artists: Artist[]) => {
-      artists.forEach(artistObj => {
+      artists.forEach((artistObj) => {
         if (artistObj.genres.length) {
           const mapObj = this.artistMap.get(artistObj.id)
-        if (!mapObj) throw new Error('mapObj undefined somehow in mapArtistGenres')
+          if (!mapObj) throw new Error('mapObj undefined somehow in mapArtistGenres')
           mapObj.genres = mapObj.genres.concat(artistObj.genres)
           populated += 1
         }
       })
     }
 
-    this.tracksArr.forEach(c => {
+    this.tracksArr.forEach((c) => {
       this.artistIDs.add(c.track.artists[0].id)
       if (this.artistMap.has(c.track.artists[0].id)) {
         const mapObj = this.artistMap.get(c.track.artists[0].id)
@@ -60,7 +63,7 @@ class Tracks {
     let populated = 0
 
     const mapAlbumGenres = (albums: Album[]) => {
-      albums.forEach(albumObj => {
+      albums.forEach((albumObj) => {
         if (albumObj.genres.length) {
           const mapObj = this.albumMap.get(albumObj.id)
           if (!mapObj) throw new Error('mapObj undefined somehow in mapAlbumGenres')
@@ -70,7 +73,7 @@ class Tracks {
       })
     }
 
-    this.tracksArr.forEach(c => {
+    this.tracksArr.forEach((c) => {
       this.albumIDs.add(c.track.album.id)
       if (this.albumMap.has(c.track.album.id)) {
         const mapObj = this.albumMap.get(c.track.album.id)
