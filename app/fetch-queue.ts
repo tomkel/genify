@@ -1,14 +1,16 @@
-const queue: Array<() => Promise<any>> = []
+const queue: Array<() => Promise<unknown>> = []
 let intervalId: number = 0
 let currInterval: number = 0
 let totalRequests = 0
 
 const updates = new EventTarget()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getTotal() {
   return totalRequests
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getDone() {
   return totalRequests - queue.length
 }
@@ -32,7 +34,7 @@ function process() {
   emitUpdate()
 }
 
-function enqueue(element: () => Promise<any>, interval = 100): () => Promise<any> {
+function enqueue(element: () => Promise<unknown>, interval = 100): () => Promise<unknown> {
   queue.push(element)
   totalRequests += 1
   emitUpdate()

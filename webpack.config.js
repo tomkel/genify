@@ -1,4 +1,4 @@
-import webpack from 'webpack' //to access built-in plugins
+// import webpack from 'webpack' //to access built-in plugins
 import path from 'node:path'
 
 export default (env, argv) => {

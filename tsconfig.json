@@ -22,5 +22,6 @@
         // noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
         "noUnusedLocals": false,
         "noUnusedParameters": true,
-        }
+    },
+    "include": ["app"]
 }

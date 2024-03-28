@@ -59,7 +59,7 @@ const router = createBrowserRouter([
     element: <Layout theme={theme}/>,
     children: [
       { path: 'generate', element: <Generate /> },
-      { path: 'save', element: <Save theme={theme}/> },
+      { path: 'save', element: <Save /> },
       { path: 'end', element: <End /> },
       { index: true, element: <AuthButton /> },
     ],

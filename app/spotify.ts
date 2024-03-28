@@ -1,4 +1,4 @@
-import type { User, Page, Artist, Track, MaxInt, FollowedArtists, Market, SavedAlbum, SimplifiedAudiobook, SimplifiedPlaylist, SavedEpisode, SavedShow, SavedTrack, UserProfile, Album, Playlist, TrackItem, SnapshotReference, Albums, Artists } from '@spotify/web-api-ts-sdk'
+import type { Album, Albums, Artist, Artists, MaxInt, Page, Playlist, SavedTrack, SimplifiedPlaylist, SnapshotReference, TrackItem, UserProfile } from '@spotify/web-api-ts-sdk'
 import fetchQueue from './fetch-queue'
 import log from './log'
 
@@ -7,10 +7,6 @@ let userId: string = ''
 
 function setAccessToken(accessToken: string) {
   token = accessToken
-}
-
-function setUserId(uid: string) {
-  userId = uid
 }
 
 type ApiQueryString = { limit?: MaxInt<50>, offset?: number, ids?: string[] } | null
@@ -186,12 +182,6 @@ function unfollowPlaylist(playlistId: string) {
   )
 }
 
-export { setAccessToken as setToken,
-         fetchAllTracks as getAllTracks,
-         fetchAllArtists as getAllArtists,
-         fetchAllAlbums as getAllAlbums,
-         createPlaylist,
-         addTracksToPlaylist,
-         getAllPlaylists,
-         unfollowPlaylist,
-         getUserId }
+export {
+  addTracksToPlaylist, createPlaylist, fetchAllAlbums as getAllAlbums, fetchAllArtists as getAllArtists, getAllPlaylists, fetchAllTracks as getAllTracks, getUserId, setAccessToken as setToken, unfollowPlaylist
+}

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import Playlists from '../playlists'
-import log from '../log'
 import type { LayoutContext } from './Layout'
 import { setToken as spotifySetToken } from '../spotify'
 
@@ -20,9 +18,9 @@ const styles = {
 
 function useGetToken(): string {
   const [stateToken, localSetToken] = useState<string>('')
+  const location = useLocation()
   if (stateToken) return stateToken
 
-  const location = useLocation()
   console.log('location hash', location.hash)
     // remove leading #
   const params = new URLSearchParams(location.hash.substring(1));
@@ -35,7 +33,7 @@ function useGetToken(): string {
 }
 
 export default function Generate() {
-  const [styles, setPlaylists]: LayoutContext = useOutletContext()
+  const [contextStyles, , setPlaylists]: LayoutContext = useOutletContext()
   const navigate = useNavigate()
   const token = useGetToken()
 
@@ -53,7 +51,7 @@ export default function Generate() {
   }
 
   return (
-    <div style={styles.mainChildren}>
+    <div style={contextStyles.mainChildren}>
       <CircularProgress sx={styles.progress} size={2.5} />
       {/* make sure that all fonts are loaded */}
       <span style={{ visibility: 'hidden', fontWeight: 300, fontFamily: 'Roboto' }}>a</span>
