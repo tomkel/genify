@@ -1,13 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Outlet } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import red from '@mui/material/colors/red'
-import type { Theme } from '@mui/material/styles'
+import { useTheme, type Theme } from '@mui/material/styles'
 import type Styles from './Styles.d.ts'
 
-function getStyles(muiTheme: Theme): Styles {
+type LayoutStyles = ReturnType<typeof getStyles>
+function getStyles(muiTheme: Theme) {
   return {
     container: {
       fontFamily: 'Roboto, sans-serif',
@@ -16,7 +16,7 @@ function getStyles(muiTheme: Theme): Styles {
       alignItems: 'center',
       justifyContent: 'space-between',
       minHeight: '97vh',
-      height: '100vh',
+      height: '100%',
       paddingTop: '1vh',
       paddingRight: '10px',
       paddingLeft: '10px',
@@ -60,7 +60,7 @@ function getStyles(muiTheme: Theme): Styles {
       textDecoration: 'none',
       color: muiTheme.palette.secondary.main,
     },
-  }
+  } satisfies Styles
 }
 
 const HeartIcon = (props: SvgIconProps) => (
@@ -77,13 +77,11 @@ const OctocatIcon = (props: React.SVGProps<SVGSVGElement>) =>
 
 
 export type LayoutContext = [
-  style: Styles,
+  style: LayoutStyles,
 ]
-Layout.propTypes = {
-  theme: PropTypes.object.isRequired,
-}
-export default function Layout(props: { theme: Theme }) {
-  const styles = getStyles(props.theme)
+export default function Layout() {
+  const theme = useTheme()
+  const styles = getStyles(theme)
 
   const context: LayoutContext = [styles]
 

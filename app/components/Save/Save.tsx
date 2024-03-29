@@ -54,9 +54,6 @@ const getStyles = (theme: Theme): Styles => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     maxWidth: '18em',
-    // '&.Mui-checked': {
-    //   color: theme.palette.text.secondary,
-    // },
   },
   headerText: {
     textAlign: 'center',

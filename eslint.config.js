@@ -35,6 +35,7 @@ export default tseslint.config(
         allowRegExp: false,
         allowNever: false,
       }],
+      "@typescript-eslint/no-shadow": ["error", { ignoreTypeValueShadow: false }],
     }
   },
   {

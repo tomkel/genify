@@ -5,11 +5,12 @@ import SaveListItem from './SaveListItem'
 import Styles from '../Styles'
 import { PlaylistNamesAndSizes } from './Save'
 
-const styles: Styles = {
+const styles = {
   playlist: {
-    marginLeft: '8%',
+    paddingLeft: '8%',
+    paddingRight: '8%',
   },
-}
+} satisfies Styles
 
 interface SaveListProps {
   playlistChecked: boolean[]

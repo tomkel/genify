@@ -3,7 +3,14 @@ import fetchQueue from './fetch-queue'
 import log from './log'
 
 let token = ''
-let userId = ''
+let _userId = ''
+
+async function getUserId(): Promise<string> {
+  if (!_userId) {
+    _userId = await fetchGeneric<UserProfile>('https://api.spotify.com/v1/me').then(json => json.id)
+  }
+  return _userId
+}
 
 function setAccessToken(accessToken: string) {
   token = accessToken
@@ -62,56 +69,44 @@ const fetchGeneric: FetchGeneric = <T extends ContentType>(url: string, qs?: Api
   return promiseFetchFunc(100)
 }
 
-async function getUserId(): Promise<string> {
-  if (!userId) {
-    userId = await fetchGeneric<UserProfile>('https://api.spotify.com/v1/me').then(json => json.id)
-  }
-  return userId
-}
-
 type ArtistsAndAlbums = Partial<Artists & Albums>
 type ArtistOrAlbum = Artist | Album
 type BaseFuncIds = (ids: string[]) => Promise<ArtistsAndAlbums>
 // baseFunc has an ids paremeter, which is an array of ids
-function fetchManyIds<T extends ArtistOrAlbum>(baseFunc: BaseFuncIds, ids: Set<string>, numAtATime: MaxInt<50>, property: 'albums' | 'artists'): Promise<T[]> {
-  const idArr = Array.from(ids)
+async function fetchManyIds<T extends ArtistOrAlbum>(baseFunc: BaseFuncIds, ids: string[], numAtATime: MaxInt<50>, property: 'albums' | 'artists'): Promise<T[]> {
   let items: T[] = []
-  const promises: Array<Promise<T[]>> = []
-  for (let i = 0; i < idArr.length; i += numAtATime) {
+  const promises: Array<Promise<void>> = []
+  for (let i = 0; i < ids.length; i += numAtATime) {
     promises.push(
-      baseFunc(idArr.slice(i, i + numAtATime))
-        .then(r => items = items.concat(r[property] as T[]))
+      baseFunc(ids.slice(i, i + numAtATime))
+        .then((r) => { items = items.concat(r[property] as T[]) })
     )
   }
 
-  return Promise.all(promises).then(() => {
-    log.info(`Got many ${idArr.length}`)
-    return items
-  })
+  await Promise.all(promises)
+  log.info(`Got many ${ids.length}`)
+  return items
 }
 
 // baseFunc has an offset parameter
 type Paged = SavedTrack | SimplifiedPlaylist
-function fetchManyUnknownSize<T extends Paged>(baseFunc: (offset: number) => Promise<Page<T>>): Promise<T[]> {
-  return baseFunc(0).then((res) => {
-    let items: T[] = []
-    items = items.concat(res.items)
+async function fetchManyUnknownSize<T extends Paged>(baseFunc: (offset: number) => Promise<Page<T>>): Promise<T[]> {
+  const initialResp = await baseFunc(0)
+  let items: T[] = [...initialResp.items]
 
-    const total = res.total
-    log.info(`Total: ${total}`)
+  const total = initialResp.total
+  log.info(`Total: ${total}`)
 
-    const promises = []
-    for (let offset = 50; offset < total; offset += 50) {
-      promises.push(
-        baseFunc(offset).then(res => items = items.concat(res.items))
-      )
-    }
+  const promises: Array<Promise<void>> = []
+  for (let offset = 50; offset < total; offset += 50) {
+    promises.push(
+      baseFunc(offset).then((r) => { items = items.concat(r.items) })
+    )
+  }
 
-    return Promise.all(promises).then(() => {
-      log.info(`Got all ${total}`)
-      return items
-    })
-  })
+  await Promise.all(promises)
+  log.info(`Got all ${total}`)
+  return items
 }
 
 // returns a Promise
@@ -130,7 +125,7 @@ function fetchArtists(ids: string[]): Promise<Artists> {
   return fetchGeneric<Artists>('https://api.spotify.com/v1/artists', { ids })
 }
 
-function fetchAllArtists(ids: Set<string>): Promise<Artist[]> {
+function fetchAllArtists(ids: string[]): Promise<Artist[]> {
   return fetchManyIds<Artist>(fetchArtists, ids, 50, 'artists')
 }
 
@@ -145,22 +140,23 @@ function fetchAllAlbums(ids: Set<string>): Promise<Album[]> {
 }
 
 // returns id of created playlist
-function createPlaylist(name: string): Promise<string> {
+async function createPlaylist(name: string): Promise<string> {
   const now = new Date()
   const dateString = `${now.getMonth() + 1}-${now.getDate()}-${String(now.getFullYear()).slice(2)}`
-  return getUserId().then(userId =>
-    fetchGeneric<Playlist>(`https://api.spotify.com/v1/users/${userId}/playlists`,
-      null, { name: `${name} [genify ${dateString}]` })
-  ).then(json => json.id)
+  const userId = await getUserId()
+  const json = await fetchGeneric<Playlist>(`https://api.spotify.com/v1/users/${userId}/playlists`,
+    null, { name: `${name} [genify ${dateString}]` })
+  return json.id
 }
 
-function addTracksToPlaylist(tracks: string[], playlist: string): Promise<SnapshotReference[]> {
+function addTracksToPlaylist(tracks: Set<string>, playlist: string): Promise<SnapshotReference[]> {
   return getUserId().then((userId) => {
     const promises: Array<Promise<SnapshotReference>> = []
-    for (let i = 0; i < tracks.length; i += 100) {
+    const tracksArr = Array.from(tracks)
+    for (let i = 0; i < tracks.size; i += 100) {
       promises.push(
         fetchGeneric<SnapshotReference>(`https://api.spotify.com/v1/users/${userId}/playlists/${playlist}/tracks`,
-          null, { uris: tracks.slice(i, i + 100).map(t => `spotify:track:${t}`) })
+          null, { uris: tracksArr.slice(i, i + 100).map(t => `spotify:track:${t}`) })
       )
     }
     return Promise.all(promises)
@@ -175,11 +171,9 @@ function getAllPlaylists(): Promise<SimplifiedPlaylist[]> {
   return fetchManyUnknownSize<SimplifiedPlaylist>(getPlaylists)
 }
 
-function unfollowPlaylist(playlistId: string) {
-  return getUserId().then(userId =>
-    fetchGeneric<string>(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/followers`,
-      null, null, 'DELETE')
-  )
+async function unfollowPlaylist(playlistId: string) {
+  const userId = await getUserId()
+  return fetchGeneric<string>(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/followers`, null, null, 'DELETE')
 }
 
 export {

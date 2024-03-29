@@ -5,6 +5,7 @@ import type { LayoutContext } from './Layout'
 import { setToken as spotifySetToken } from '../spotify'
 import { usePlaylists } from '../playlists'
 import log from '../log'
+import Styles from './Styles'
 
 const styles = {
   progress: {
@@ -15,7 +16,7 @@ const styles = {
     left: 0,
     right: 0,
   },
-}
+} satisfies Styles
 
 function useGetToken(): string {
   const [stateToken, localSetToken] = useState<string>('')

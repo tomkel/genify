@@ -2,8 +2,20 @@ import Tracks, { TrackIdsAndGenres } from './tracks'
 import * as spotify from './spotify'
 import log from './log'
 
+interface Playlist {
+  selected: boolean
+  tracks: Set<string>
+  name: string
+}
+
+// returns an array of ids that match the regex parameter
+const getMatchedSpotifyPlaylists = (match: RegExp) =>
+  spotify.getAllPlaylists().then(playlists =>
+    playlists.filter(item => match.test(item.name)).map(item => item.id)
+  )
+
 class Playlists {
-  newPlaylists: Map<string, string[]>
+  newPlaylists: Map<string, Playlist>
 
   constructor(useDom = false) {
     this.newPlaylists = new Map()
@@ -13,8 +25,8 @@ class Playlists {
         const storedPlaylists = sessionStorage.getItem('playlists')
         if (storedPlaylists) {
           log.info('creating playlist object')
-          const parsedPlaylists = JSON.parse(storedPlaylists) as Array<[string, string[]]>
-          this.newPlaylists = new Map(parsedPlaylists)
+          // const parsedPlaylists = JSON.parse(storedPlaylists) as Array<[string, string[]]>
+          // this.newPlaylists = new Map(parsedPlaylists)
         } else {
           log.info('no playlists found in DOM')
         }
@@ -24,36 +36,37 @@ class Playlists {
 
   tracks = new Tracks()
 
-  totalTracks = () => this.tracks.tracksArr.length
+  totalTracks = () => this.tracks.savedTracks.length
   numTracksCategorized = 0
 
   createNewPlaylists = (map: Map<string, TrackIdsAndGenres>) => {
     log.debug(map)
-    const sortedTracks = new Set<string>()
-    map.forEach((v) => {
+    const allTracks = new Set<string>()
+    map.forEach((idag) => {
+      const { tracks, genres } = idag
       try {
         // organize by genre
-        v.genres.forEach((g) => {
-          v.tracks.forEach((t) => {
+        genres.forEach((g) => {
+          tracks.forEach((t) => {
             if (this.newPlaylists.has(g)) {
-              const trackArr = this.newPlaylists.get(g)
-              if (!trackArr) throw new Error('trackArr undefined somehow')
-              trackArr.push(t)
+              const plist = this.newPlaylists.get(g)
+              if (!plist) throw new Error('trackSet undefined somehow')
+              plist.tracks.add(t)
             } else {
-              this.newPlaylists.set(g, [t])
+              this.newPlaylists.set(g, { tracks: new Set([t]), selected: true, name: g })
             }
-            sortedTracks.add(t)
+            allTracks.add(t)
           })
         })
       } catch (e) {
         log.error(e)
-        log.error('failed on', v)
+        log.error('failed on', idag)
       }
     })
-    this.numTracksCategorized = sortedTracks.size
+    this.numTracksCategorized = allTracks.size
     // maps are iterated by insertion order
     // reorder map by array size descending
-    this.newPlaylists = new Map([...this.newPlaylists.entries()].sort((a, b) => b[1].length - a[1].length))
+    this.newPlaylists = new Map([...this.newPlaylists].sort((a, b) => b[1].tracks.size - a[1].tracks.size))
     log.info(this.newPlaylists)
     return this.newPlaylists
   }
@@ -63,14 +76,14 @@ class Playlists {
     .then(this.createNewPlaylists)
     .then((newPlaylists) => {
       if (process.env.NODE_ENV === 'development') {
-        log.info('storing playlists in DOM')
-        sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+        // log.info('storing playlists in DOM')
+        // sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
       }
       return newPlaylists
     })
 
-  saveSpotifyPlaylists = (playlistsToSave: boolean[]) => {
-    const promises = []
+  saveSpotifyPlaylists = () => {
+    const promises: Array<Promise<void>> = []
     const playlistArr = Array.from(this.newPlaylists)
     for (let i = 0; i < playlistsToSave.length; i += 1) {
       if (playlistsToSave[i]) {
@@ -86,25 +99,18 @@ class Playlists {
     return Promise.all(promises)
   }
 
-  // returns an array of ids that match the regex parameter
-  getMatchedSpotifyPlaylists = (match: RegExp) =>
-    spotify.getAllPlaylists().then(playlists =>
-      playlists.filter(item => match.test(item.name)).map(item => item.id)
-    )
-
   unfollowSpotifyPlaylists = () =>
-    this.getMatchedSpotifyPlaylists(/\[.*?genify.*?\]/)
+    getMatchedSpotifyPlaylists(/\[.*?genify.*?\]/)
       .then(async (matched) => {
         await Promise.all(matched.map(spotify.unfollowPlaylist))
         log.info(matched.length, 'playlists cleared')
       })
 
   // playlistsToSave is a boolean array
-  save = (playlistsToSave: boolean[], deleteFirst: boolean) => {
+  save = async (deleteFirst: boolean) => {
     log.info('saving')
     if (deleteFirst) {
-      return this.unfollowSpotifyPlaylists()
-        .then(() => this.saveSpotifyPlaylists(playlistsToSave))
+      await this.unfollowSpotifyPlaylists()
     }
     return this.saveSpotifyPlaylists(playlistsToSave)
   }
@@ -116,7 +122,7 @@ class Playlists {
   }
 }
 
-const playlists = new Playlists(false)
+const playlists = new Playlists()
 export function usePlaylists(): Playlists {
   return playlists
 }

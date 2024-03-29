@@ -66,7 +66,7 @@ const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
 const router = createBrowserRouter([
   {
     path: basePath,
-    element: <Layout theme={theme} />,
+    element: <Layout />,
     children: [
       { path: 'generate', element: <Generate /> },
       { path: 'save', element: <Save /> },
@@ -76,18 +76,16 @@ const router = createBrowserRouter([
   },
 ])
 
-class Main extends React.Component {
-  render() {
-    return (
-      <React.StrictMode>
-        <CssBaseline>
-          <ThemeProvider theme={theme}>
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </CssBaseline>
-      </React.StrictMode>
-    )
-  }
+function Main() {
+  return (
+    <React.StrictMode>
+      <CssBaseline>
+        <ThemeProvider theme={theme}>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </CssBaseline>
+    </React.StrictMode>
+  )
 }
 
 const domNode = document.getElementById('app')

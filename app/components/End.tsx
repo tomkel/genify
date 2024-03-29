@@ -1,7 +1,7 @@
 import React from 'react'
 import type Styles from './Styles'
 
-const styles: Styles = {
+const styles = {
   container: {
     maxWidth: '40rem',
     margin: '0 auto',
@@ -19,7 +19,7 @@ const styles: Styles = {
     fontWeight: 300,
     fontSize: '2em',
   },
-}
+} satisfies Styles
 
 export default class End extends React.Component {
   render() {

@@ -2,6 +2,7 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import { useOutletContext } from 'react-router-dom'
 import type { LayoutContext } from './Layout'
+import Styles from './Styles'
 
 const styles = {
   container: {
@@ -15,7 +16,7 @@ const styles = {
   startButton: {
     width: '20rem',
   },
-}
+} satisfies Styles
 
 
 function getAuthURL() {
@@ -46,7 +47,7 @@ export default function AuthButton() {
   const [contextStyles]: LayoutContext = useOutletContext()
 
   return (
-    <div style={Object.assign({}, contextStyles.mainContainer, styles.container)}>
+    <div style={Object.assign({}, contextStyles.mainChildren, styles.container)}>
       <h1 style={styles.introText}>
         Genify organizes your saved music in Spotify into playlists based on genre.
       </h1>

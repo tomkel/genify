@@ -4,14 +4,13 @@ import type { Album, Artist, SavedTrack } from '@spotify/web-api-ts-sdk'
 
 
 export interface TrackIdsAndGenres {
-  tracks: string[]
-  genres: string[]
+  tracks: Set<string>
+  genres: Set<string>
 }
 class Tracks {
 
-  tracksArr: SavedTrack[] = []
+  savedTracks = new Array<SavedTrack>()
 
-  artistIDs = new Set<string>()
   // key: artist ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
@@ -29,32 +28,33 @@ class Tracks {
    *  genres
    */
   mapArtists = () => {
-    let populated = 0
+    let artistHasGenres = 0
 
     const mapArtistGenres = (artists: Artist[]) => {
-      artists.forEach((artistObj) => {
-        if (artistObj.genres.length) {
-          const mapObj = this.artistMap.get(artistObj.id)
-          if (!mapObj) throw new Error('mapObj undefined somehow in mapArtistGenres')
-          mapObj.genres = mapObj.genres.concat(artistObj.genres)
-          populated += 1
+      artists.forEach((artist) => {
+        if (artist.genres.length) {
+          const tg = this.artistMap.get(artist.id)
+          if (!tg) throw new Error('we fetched an artist that we shouldnt have')
+          artist.genres.forEach(genre => tg.genres.add(genre))
+          artistHasGenres += 1
         }
       })
     }
 
-    this.tracksArr.forEach((c) => {
-      this.artistIDs.add(c.track.artists[0].id)
-      if (this.artistMap.has(c.track.artists[0].id)) {
-        const mapObj = this.artistMap.get(c.track.artists[0].id)
-        if (!mapObj) throw new Error('mapObj undefined somehow in artist tracksArr')
-        mapObj.tracks.push(c.track.id)
+    this.savedTracks.forEach((t) => {
+      const firstArtistID = t.track.artists[0].id
+      if (this.artistMap.has(firstArtistID)) {
+        const tg = this.artistMap.get(firstArtistID)
+        if (!tg) throw new Error('tg undefined somehow in artist savedTracks')
+        tg.tracks.add(t.track.id)
       } else {
-        this.artistMap.set(c.track.artists[0].id, { tracks: [c.track.id], genres: [] })
+        this.artistMap.set(firstArtistID, { tracks: new Set([t.track.id]), genres: new Set() })
       }
     })
 
-    return spotify.getAllArtists(this.artistIDs).then(mapArtistGenres).then(() => {
-      log.info(populated, '/', this.artistIDs.size, 'artists have their genres populated')
+    const artistIDs = [...this.artistMap.keys()]
+    return spotify.getAllArtists(artistIDs).then(mapArtistGenres).then(() => {
+      log.info(artistHasGenres, '/', this.artistMap.size, 'artists have their genres populated')
       return this.artistMap
     })
   }
@@ -67,20 +67,20 @@ class Tracks {
         if (albumObj.genres.length) {
           const mapObj = this.albumMap.get(albumObj.id)
           if (!mapObj) throw new Error('mapObj undefined somehow in mapAlbumGenres')
-          mapObj.genres = mapObj.genres.concat(albumObj.genres)
+          mapObj.genres.forEach(genre => mapObj.genres.add(genre))
           populated += 1
         }
       })
     }
 
-    this.tracksArr.forEach((c) => {
+    this.savedTracks.forEach((c) => {
       this.albumIDs.add(c.track.album.id)
       if (this.albumMap.has(c.track.album.id)) {
         const mapObj = this.albumMap.get(c.track.album.id)
         if (!mapObj) throw new Error('mapObj undefined somehow in album tracksArr')
-        mapObj.tracks.push(c.track.id)
+        mapObj.tracks.add(c.track.id)
       } else {
-        this.albumMap.set(c.track.album.id, { tracks: [c.track.id], genres: [] })
+        this.albumMap.set(c.track.album.id, { tracks: new Set([c.track.id]), genres: new Set() })
       }
     })
 
@@ -90,7 +90,7 @@ class Tracks {
     })
   }
 
-  collect = () => spotify.getAllTracks().then(tracks => this.tracksArr = tracks)
+  collect = () => spotify.getAllTracks().then(tracks => this.savedTracks = tracks)
 }
 
 export default Tracks
