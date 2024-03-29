@@ -19,14 +19,18 @@ window.addEventListener('unhandledrejection', (ev) => {
   log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
 })
 
-const palette: PaletteOptions = {}
-palette.primary = { main: '#3f3f42', contrastText: '#dfe0e6' }
-palette.secondary = { main: '#84bd00' }
-palette.text = { primary: '#dfe0e6', secondary: '#838486' }
-// alternateTextColor shows up on buttons
-// cardBackground used in Save.tsx
-palette.mode = 'dark'
-palette.background = { default: '#121314' }
+const palette = {
+  primary: { main: '#3f3f42', contrastText: '#dfe0e6' },
+  secondary: { main: '#84bd00' },
+  text: { primary: '#dfe0e6', secondary: '#838486' }, // alternateTextColor shows up on buttons
+  mode: 'dark',
+  background: { default: '#121314', paper: '#222326' },
+} satisfies PaletteOptions
+
+// for ##rrggbbaa notation
+const alphaToHex = (decimal: number): string => (
+  Math.trunc(decimal * 255).toString(16).padStart(2, '0')
+)
 
 const theme = createTheme({
   // black background: #121314
@@ -35,20 +39,26 @@ const theme = createTheme({
   // bright gray <h> text: #dfe0e6
   // accent green: #84bd00
   // icon white: #ffffff
+  palette,
   components: {
     MuiBackdrop: {
-      styleOverrides: { root: { backgroundColor: grey['900'] } },
+      styleOverrides: { root: { backgroundColor: grey[900] } },
     },
     MuiCheckbox: {
       styleOverrides: {
         root: {
-          backgroundColor: palette.secondary.main, // equal to textColor/alternateTextColor by default
-          '&Mui.checked': { backgroundColor: palette.secondary.main },
+          '&.Mui-checked': { color: palette.text.secondary },
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': { backgroundColor: palette.primary.contrastText + alphaToHex(0.4) },
+        }
+      }
+    }
   },
-  palette,
 })
 
 const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'

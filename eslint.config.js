@@ -8,10 +8,20 @@ import hooksPlugin from 'eslint-plugin-react-hooks'
 
 export default tseslint.config(
   {
-    ignores: ["*.js"],
+    ignores: ["*.js", "dist/*"],
   },
   eslint.configs.recommended,
-  // stylistic.configs.customize({ quoteProps: 'as-needed' }),
+  stylistic.configs.customize({ quoteProps: 'as-needed', braceStyle: '1tbs', commaDangle: 'only-multiline' }),
+  {
+    rules: {
+      '@stylistic/no-multiple-empty-lines': 'off',
+      '@stylistic/jsx-one-expression-per-line': 'off',
+      '@stylistic/jsx-closing-tag-location': 'off',
+      '@stylistic/padded-blocks': 'off',
+      '@stylistic/multiline-ternary': 'off',
+      '@stylistic/max-statements-per-line': ['error', { max: 2 }],
+    }
+  },
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {

@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { Outlet } from 'react-router-dom'
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import Button from '@mui/material/Button'
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import red from '@mui/material/colors/red'
 import type { Theme } from '@mui/material/styles'
-import Playlists from '../playlists'
 import type Styles from './Styles.d.ts'
 
 function getStyles(muiTheme: Theme): Styles {
@@ -17,6 +16,11 @@ function getStyles(muiTheme: Theme): Styles {
       alignItems: 'center',
       justifyContent: 'space-between',
       minHeight: '97vh',
+      height: '100vh',
+      paddingTop: '1vh',
+      paddingRight: '10px',
+      paddingLeft: '10px',
+      paddingBottom: '1.5vh',
       backgroundColor: muiTheme.palette.background.default,
       color: muiTheme.palette.text.primary,
     },
@@ -37,13 +41,15 @@ function getStyles(muiTheme: Theme): Styles {
     headerButton: {
       letterSpacing: '0.5em',
       color: '#fff',
+      fontWeight: '700',
     },
     footer: {
       marginTop: '1.5rem',
+      fontWeight: '500',
     },
     heart: {
-      width: '1em',
-      height: '1em',
+      width: '0.65em',
+      height: '0.65em',
     },
     github: {
       fill: muiTheme.palette.text.primary,
@@ -52,13 +58,13 @@ function getStyles(muiTheme: Theme): Styles {
     },
     nameLink: {
       textDecoration: 'none',
-      color: muiTheme.palette.primary.contrastText,
+      color: muiTheme.palette.secondary.main,
     },
   }
 }
 
 const HeartIcon = (props: SvgIconProps) => (
-  <SvgIcon sx={{ color: red['600'], '&:hover': { color: red.A100 } }} viewBox="0 0 32 29.6" {...props}>
+  <SvgIcon sx={{ color: red[600], '&:hover': { color: red.A100 } }} viewBox="0 0 32 29.6" {...props}>
     <path
       d={`M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
       c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z`}
@@ -72,8 +78,6 @@ const OctocatIcon = (props: React.SVGProps<SVGSVGElement>) =>
 
 export type LayoutContext = [
   style: Styles,
-  playlists: Playlists | undefined,
-  setPlaylists: React.Dispatch<React.SetStateAction<Playlists | undefined>>,
 ]
 Layout.propTypes = {
   theme: PropTypes.object.isRequired,
@@ -81,9 +85,7 @@ Layout.propTypes = {
 export default function Layout(props: { theme: Theme }) {
   const styles = getStyles(props.theme)
 
-  const [playlists, setPlaylists] = useState<Playlists | undefined>()
-
-  const context: LayoutContext = [styles, playlists, setPlaylists]
+  const context: LayoutContext = [styles]
 
   return (
     <div style={styles.container}>

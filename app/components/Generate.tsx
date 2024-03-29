@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
-import Playlists from '../playlists'
 import type { LayoutContext } from './Layout'
 import { setToken as spotifySetToken } from '../spotify'
+import { usePlaylists } from '../playlists'
+import log from '../log'
 
 const styles = {
   progress: {
@@ -32,18 +33,23 @@ function useGetToken(): string {
   return hashToken
 }
 
+let hasRun = false
 export default function Generate() {
-  const [contextStyles, , setPlaylists]: LayoutContext = useOutletContext()
+  const [contextStyles]: LayoutContext = useOutletContext()
+  const playlists = usePlaylists()
   const navigate = useNavigate()
   const token = useGetToken()
 
   useEffect(() => {
     if (!token) throw new Error('didnt get token')
+    if (hasRun) {
+      log.info('encountered hasRun twice!')
+      return
+    }
 
-    const playlists = new Playlists(false)
-    setPlaylists(playlists)
     void playlists.gen()
       .then(() => { navigate('/save') })
+    hasRun = true
   }, [])
 
   if (!token) {

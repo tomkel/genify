@@ -5,12 +5,12 @@
   "main": "app/entry.tsx",
   "type": "module",
   "scripts": {
-    "start": "webpack serve --mode development -d inline-source-map --hot --static app --history-api-fallback",
+    "start": "webpack serve --mode development -d inline-source-map --static app --history-api-fallback --no-live-reload --no-hot",
     "build": "webpack build --mode production --progress",
     "start:bun": "NODE_ENV=development bun build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
     "build:bun": "NODE_ENV=production bun build app/entry.tsx --outfile dist/bundle.js --target browser --minify",
     "deploy": "npm run build && fish deploy.fish",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint . ; tsc --noEmit"
   },
   "repository": {
     "type": "git",

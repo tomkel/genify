@@ -116,4 +116,9 @@ class Playlists {
   }
 }
 
+const playlists = new Playlists(false)
+export function usePlaylists(): Playlists {
+  return playlists
+}
+
 export default Playlists

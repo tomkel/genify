@@ -10,30 +10,23 @@ interface SaveListItemProps {
   onCheck: CheckboxProps['onChange']
   checked: boolean
 }
-export default class SaveListItem extends React.Component<SaveListItemProps> {
+export default React.memo(function SaveListItem(props: SaveListItemProps) {
+  const { primaryText, secondaryText, style, onCheck, checked } = props
 
-  shouldComponentUpdate(nextProps: SaveListItemProps) {
-    return nextProps.checked !== this.props.checked
-  }
-
-  render() {
-    const { primaryText, secondaryText, style, onCheck, checked } = this.props
-
-    return (
-      <ListItem sx={style}>
-        <ListItemButton>
-          <ListItemIcon>
-            <Checkbox
-              edge="start"
-              checked={checked}
-              onChange={onCheck}
-            />
-          </ListItemIcon>
-          <ListItemText primary={primaryText} secondary={secondaryText} />
-        </ListItemButton>
-      </ListItem>
-    )
-  }
-}
+  return (
+    <ListItem sx={style}>
+      <ListItemButton>
+        <ListItemIcon>
+          <Checkbox
+            edge="start"
+            checked={checked}
+            onChange={onCheck}
+          />
+        </ListItemIcon>
+        <ListItemText primary={primaryText} secondary={secondaryText} />
+      </ListItemButton>
+    </ListItem>
+  )
+})
 
 // ref={(element) => { this.props.refArr[i] = element }}

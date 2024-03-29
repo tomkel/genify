@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import DoneIcon from '@mui/icons-material/Done'
@@ -12,14 +12,16 @@ import UnselectButton from './UnselectButton'
 import type Styles from '../Styles'
 import Fab from '@mui/material/Fab'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import { LayoutContext } from '../Layout'
+import { usePlaylists } from '../../playlists'
+import log from '../../log'
+import { Theme, useTheme } from '@mui/material/styles'
 
-const styles: Styles = {
+const getStyles = (theme: Theme): Styles => ({
   container: {
     maxWidth: '40rem',
     margin: '0 auto',
     paddingTop: '0.1rem',
-    backgroundColor: '#222326',
+    backgroundColor: theme.palette.background.paper,
   },
   progress: {
     margin: 'auto',
@@ -43,18 +45,24 @@ const styles: Styles = {
     justifyContent: 'center',
     flexWrap: 'wrap',
   },
-  headerCheckbox: {
+  headerCheckboxContainer: {
+    display: 'block',
+    textAlign: 'center',
+    userSelect: 'none',
     marginTop: '0.5rem',
     marginBottom: '1rem',
     marginLeft: 'auto',
     marginRight: 'auto',
     maxWidth: '18em',
+    // '&.Mui-checked': {
+    //   color: theme.palette.text.secondary,
+    // },
   },
   headerText: {
     textAlign: 'center',
-    fontWeight: 300,
+    fontWeight: 400,
   },
-}
+})
 
 const falseArr = (size: number): boolean[] => {
   return Array<boolean>(size).fill(false)
@@ -63,25 +71,34 @@ const trueArr = (size: number): boolean[] => {
   return Array<boolean>(size).fill(true)
 }
 
+let ranEffect = false
+export type PlaylistNamesAndSizes = Array<[playlistName: string, playlistSize: number]>
 export default function Save() {
-  const [, playlists]: LayoutContext = useOutletContext()
-  if (!playlists) throw new Error('expected playlists')
+  const playlists = usePlaylists()
+  const theme = useTheme()
+  const styles = getStyles(theme)
 
   const totalTracks = playlists.totalTracks()
-  type PlaylistNamesAndSizes = Array<[playlistName: string, playlistSize: number]>
   const playlistNamesAndSizes: PlaylistNamesAndSizes = Array.from(playlists.getPlaylistNamesAndSizeMap().entries())
 
   const [deleteExistingPlaylists, setDeleteExisting] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [playlistChecked, setPlaylistChecked] = useState<boolean[]>(() => playlistNamesAndSizes.map(curr => curr[1] > 1))
+  const [playlistChecked, setPlaylistChecked] = useState<boolean[]>(() => playlistNamesAndSizes.map(([,size]) => size > 1))
 
   const navigate = useNavigate()
 
   useEffect(() => {
     // give time for the progress bar to show up before saving
-    if (!saving) throw new Error('expected to be saving')
+
+    if (!saving) {
+      log.info('expected to be saving')
+      return
+    }
+    if (ranEffect) throw new Error('already ran saving effect')
+
     void playlists.save(playlistChecked, deleteExistingPlaylists)
       .then(() => { navigate('/end') })
+    ranEffect = true
   }, [saving])
 
   const updateCheckedItem = (index: number, checked: boolean) => {
@@ -99,6 +116,7 @@ export default function Save() {
           newCheckedArr[j] = false
         }
         setPlaylistChecked(newCheckedArr)
+        return
       }
     }
   }
@@ -114,7 +132,7 @@ export default function Save() {
   ) : <></>
 
   return (
-    <div style={styles.container}>
+    <div style={Object.assign({}, styles.mainChildren, styles.container)}>
       <h1 style={styles.headerText}>Choose your playlists</h1>
       <div style={styles.buttonContainer}>
         <Button variant="contained" color="primary" sx={styles.button} onClick={checkAll}>Select All</Button>
@@ -130,18 +148,18 @@ export default function Save() {
           <Checkbox
             checked={deleteExistingPlaylists}
             onChange={() => { setDeleteExisting(prev => !prev) }}
-            sx={styles.headerCheckbox}
           />
         )}
         label="Delete existing Genify playlists"
+        sx={styles.headerCheckboxContainer}
       />
 
       <Divider />
 
       <SaveList
-        checkedArr={playlistChecked}
-        updateChecked={updateCheckedItem}
-        playlistArr={playlistNamesAndSizes}
+        playlistChecked={playlistChecked}
+        updateCheckedItem={updateCheckedItem}
+        playlistNamesAndSizes={playlistNamesAndSizes}
         totalTracks={totalTracks}
         numTracksCategorized={playlists.numTracksCategorized}
       />
