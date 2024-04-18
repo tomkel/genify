@@ -1,21 +1,22 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+        "noEmit": true,
         "outDir": "dist",
+        "skipLibCheck": true,
+
+        "target": "ESNext",
+        "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
+        // "types": ["vite/client"],
         "allowJs": false,
-        "strict": true,
-        "jsx": "react",
-        "noEmit": false,
-        "isolatedModules": true,
-        "module": "ES2022",
+        "jsx": "react-jsx",
+
+        "isolatedModules": true, // vite
+        "module": "ESNext",
         "moduleResolution": "bundler",
         "esModuleInterop": true,
-        "allowImportingTsExtensions": false,
+        "allowImportingTsExtensions": true,
 
-        "forceConsistentCasingInFileNames": true,
-        "inlineSourceMap": true,
-        
+        "strict": true,
         // linter checks for common issues
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
@@ -23,5 +24,5 @@
         "noUnusedLocals": false,
         "noUnusedParameters": true,
     },
-    "include": ["app"]
+    // "include": ["app"]
 }

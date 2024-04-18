@@ -2,7 +2,7 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import { useOutletContext } from 'react-router-dom'
 import type { LayoutContext } from './Layout'
-import Styles from './Styles'
+import type Styles from './Styles'
 
 const styles = {
   container: {

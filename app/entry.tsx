@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { grey } from '@mui/material/colors'
@@ -8,7 +8,7 @@ import AuthButton from './components/AuthButton'
 import End from './components/End'
 import Generate from './components/Generate'
 import Layout from './components/Layout'
-import Save from './components/Save/index'
+import Save from './components/Save/index.ts'
 import log from './log'
 // import '@fontsource/roboto/300.css'
 // import '@fontsource/roboto/400.css'
@@ -78,17 +78,20 @@ const router = createBrowserRouter([
 
 function Main() {
   return (
-    <React.StrictMode>
-      <CssBaseline>
-        <ThemeProvider theme={theme}>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </CssBaseline>
-    </React.StrictMode>
+    <>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </>
   )
 }
 
 const domNode = document.getElementById('app')
 if (!domNode) throw new Error('no root found')
 const root = createRoot(domNode)
-root.render(<Main />)
+root.render(
+  <StrictMode>
+    <Main />
+  </StrictMode>
+)
