@@ -58,7 +58,7 @@ const config = tseslint.config(
         },
       ],
       '@typescript-eslint/no-shadow': ['error', { ignoreTypeValueShadow: false }],
-      '@typescript-eslint/no-restricted-imports': [ 'error', { patterns: ['**/index*'], }],
+      '@typescript-eslint/no-restricted-imports': ['error', { patterns: ['**/index*'] }],
     },
   },
   {
@@ -130,10 +130,8 @@ const config = tseslint.config(
     rules: {
       ...importPlugin.configs.recommended.rules,
       ...importPlugin.configs.typescript.rules,
-      'import-x/namespace': 'off',
-      // 'import-x/no-internal-modules': ['error', { forbid: ['.*']}]
-      // 'import-x/no-relative-packages': 'error',
-      'import-x/extensions': ['error', 'always', {ignorePackages: true} ],
+      'import-x/namespace': 'off', // not supported by flat config format
+      'import-x/extensions': ['error', 'always', { ignorePackages: true }],
     },
   },
   // { files: ['*.js'], extends: [tseslint.configs.disableTypeChecked], },

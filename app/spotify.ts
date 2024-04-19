@@ -135,7 +135,7 @@ function fetchAlbums(ids: string[]): Promise<Albums> {
   return fetchGeneric<Albums>('https://api.spotify.com/v1/albums', { ids })
 }
 
-function fetchAllAlbums(ids: Set<string>): Promise<Album[]> {
+function fetchAllAlbums(ids: string[]): Promise<Album[]> {
   return fetchManyIds<Album>(fetchAlbums, ids, 20, 'albums')
 }
 

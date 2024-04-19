@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
-// https://vitejs.dev/config/
+// what is process.env.NODE_ENV ?
+
 export default defineConfig({
   plugins: [
     react({

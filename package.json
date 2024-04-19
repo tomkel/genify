@@ -5,16 +5,14 @@
   "main": "app/entry.tsx",
   "type": "module",
   "scripts": {
-    "start": "webpack serve --mode development -d inline-source-map --static app --history-api-fallback --no-live-reload --no-hot",
-    "build": "webpack build --mode production --progress",
-    "start:vite": "vite dev",
-    "build:vite": "tsc && vite build",
+    "dev": "vite dev",
+    "build": "tsc && vite build",
+    "lint": "eslint . ; tsc --noEmit",
     "lint:vite": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 ; tsc --noEmit",
-    "preview:vite": "vite preview",
+    "preview": "vite preview",
     "start:bun": "NODE_ENV=development bun build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
     "build:bun": "NODE_ENV=production bun build app/entry.tsx --outfile dist/bundle.js --target browser --minify",
-    "deploy": "npm run build && fish deploy.fish",
-    "lint": "eslint . ; tsc --noEmit"
+    "deploy": "npm run build && fish deploy.fish"
   },
   "repository": {
     "type": "git",

@@ -6,7 +6,7 @@
 
         "target": "ESNext",
         "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
-        // "types": ["vite/client"],
+        "types": ["vite/client"],
         "allowJs": false,
         "jsx": "react-jsx",
 
