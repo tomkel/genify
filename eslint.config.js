@@ -1,4 +1,4 @@
-// @ts-check
+/* eslint-disable import-x/no-named-as-default-member */
 
 import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
@@ -18,7 +18,6 @@ const stylisticCustomized = stylistic.configs.customize({
 })
 
 const config = tseslint.config(
-  // env: { browser: true, es2020: true },
   { ignores: ['dist/*'] },
   eslint.configs.recommended,
   {
@@ -90,7 +89,8 @@ const config = tseslint.config(
     },
     rules: {
       'barrel-files/avoid-barrel-files': 'error',
-      'barrel-files/avoid-namespace-import': 'error',
+      // disable because is OK to not treeshake local spotify lib.
+      // 'barrel-files/avoid-namespace-import': 'error',
       'barrel-files/avoid-re-export-all': 'error',
     },
   },
@@ -134,7 +134,7 @@ const config = tseslint.config(
       'import-x/extensions': ['error', 'always', { ignorePackages: true }],
     },
   },
-  // { files: ['*.js'], extends: [tseslint.configs.disableTypeChecked], },
+  { files: ['*.js'], extends: [tseslint.configs.disableTypeChecked] },
 )
 
 // console.log(config)

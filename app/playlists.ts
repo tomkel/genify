@@ -1,6 +1,6 @@
-import Tracks, { TrackIdsAndGenres } from './tracks'
-import * as spotify from './spotify'
-import log from './log'
+import Tracks, { TrackIdsAndGenres } from './tracks.ts'
+import * as spotify from './spotify.ts'
+import log from './log.ts'
 
 interface Playlist {
   selected: boolean
@@ -19,7 +19,7 @@ class Playlists {
 
   constructor(useDom = false) {
     this.newPlaylists = new Map()
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       if (useDom) {
         log.info('retrieving playlists from DOM')
         const storedPlaylists = sessionStorage.getItem('playlists')
@@ -75,7 +75,7 @@ class Playlists {
     .then(this.tracks.mapArtists)
     .then(this.createNewPlaylists)
     .then((newPlaylists) => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         // log.info('storing playlists in DOM')
         // sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
       }

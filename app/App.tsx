@@ -1,14 +1,13 @@
-
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { grey } from '@mui/material/colors'
 import CssBaseline from '@mui/material/CssBaseline'
 import { PaletteOptions, ThemeProvider, createTheme } from '@mui/material/styles'
-import AuthButton from './components/AuthButton'
-import End from './components/End'
-import Generate from './components/Generate'
-import Layout from './components/Layout'
-import Save from './components/Save/index.ts'
-import log from './log'
+import AuthButton from './components/AuthButton.tsx'
+import End from './components/End.tsx'
+import Generate from './components/Generate.tsx'
+import Layout from './components/Layout.tsx'
+import Save from './components/Save/Save.tsx'
+import log from './log.ts'
 // import '@fontsource/roboto/300.css'
 // import '@fontsource/roboto/400.css'
 // import '@fontsource/roboto/500.css'
@@ -60,17 +59,15 @@ const theme = createTheme({
   },
 })
 
-const basePath = process.env.NODE_ENV === 'development' ? '/' : '/genify'
-
 const router = createBrowserRouter([
   {
-    path: basePath,
+    path: import.meta.env.BASE_URL,
     element: <Layout />,
     children: [
+      { index: true, element: <AuthButton /> },
       { path: 'generate', element: <Generate /> },
       { path: 'save', element: <Save /> },
       { path: 'end', element: <End /> },
-      { index: true, element: <AuthButton /> },
     ],
   },
 ])

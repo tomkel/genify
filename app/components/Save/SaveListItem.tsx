@@ -1,7 +1,9 @@
-import React from 'react'
+import { memo } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import ListItem from '@mui/material/ListItem'
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
 
 interface SaveListItemProps {
   primaryText: string
@@ -10,7 +12,7 @@ interface SaveListItemProps {
   onCheck: CheckboxProps['onChange']
   checked: boolean
 }
-export default React.memo(function SaveListItem(props: SaveListItemProps) {
+export default memo(function SaveListItem(props: SaveListItemProps) {
   const { primaryText, secondaryText, style, onCheck, checked } = props
 
   return (

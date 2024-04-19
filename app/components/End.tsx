@@ -1,5 +1,4 @@
-import React from 'react'
-import type Styles from './Styles'
+import type Styles from './Styles.d.ts'
 
 const styles = {
   container: {
@@ -21,13 +20,11 @@ const styles = {
   },
 } satisfies Styles
 
-export default class End extends React.Component {
-  render() {
-    return (
-      <div style={styles.container}>
-        <h1 style={styles.h1}>Success!</h1>
-        <h2 style={styles.h2}>Check your Spotify account for the playlists.</h2>
-      </div>
-    )
-  }
+export default function End() {
+  return (
+    <div style={styles.container}>
+      <h1 style={styles.h1}>Success!</h1>
+      <h2 style={styles.h2}>Check your Spotify account for the playlists.</h2>
+    </div>
+  )
 }

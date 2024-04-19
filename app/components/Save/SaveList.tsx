@@ -1,9 +1,9 @@
-import React from 'react'
+import { memo } from 'react'
 import List from '@mui/material/List'
 import ListSubheader from '@mui/material/ListSubheader'
-import SaveListItem from './SaveListItem'
-import Styles from '../Styles'
-import { PlaylistNamesAndSizes } from './Save'
+import SaveListItem from './SaveListItem.tsx'
+import type Styles from '../Styles.d.ts'
+import { PlaylistNamesAndSizes } from './Save.tsx'
 
 const styles = {
   playlist: {
@@ -19,7 +19,7 @@ interface SaveListProps {
   totalTracks: number
   numTracksCategorized: number
 }
-export default React.memo(function SaveList(props: SaveListProps) {
+export default memo(function SaveList(props: SaveListProps) {
   const {
     playlistChecked,
     updateCheckedItem,

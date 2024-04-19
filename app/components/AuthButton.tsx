@@ -1,4 +1,3 @@
-import React from 'react'
 import Button from '@mui/material/Button'
 import { useOutletContext } from 'react-router-dom'
 import type { LayoutContext } from './Layout'
@@ -22,17 +21,17 @@ const styles = {
 function getAuthURL() {
   const authURL = 'https://accounts.spotify.com/authorize'
   // const stateString = crypto.randomBytes(64).toString('hex')
-  let redirectUrl
-  if (process.env.NODE_ENV === 'production') {
-    redirectUrl = 'https://tkel.ly/genify/generate'
-  } else {
-    redirectUrl = 'http://localhost:8080/generate'
-  }
+  const redirectOrigin = import.meta.env.PROD
+    ? 'https://tkel.ly'
+    : 'http://localhost:5173'
+
+  // `new URL` will throw with invalid result, although it seems pretty tolerant
+  const redirectUrl = new URL(`${import.meta.env.BASE_URL}/generate`, redirectOrigin)
 
   const authParams = new URLSearchParams({
     client_id: '38dfce7a65f84684b6678907870b0cec',
     response_type: 'token',
-    redirect_uri: redirectUrl,
+    redirect_uri: redirectUrl.toString(),
     // state: stateString,
     scope: 'playlist-modify-public user-library-read',
   })

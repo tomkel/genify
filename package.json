@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "tsc && vite build",
-    "lint": "eslint . ; tsc --noEmit",
-    "lint:vite": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 ; tsc --noEmit",
+    "build": "vite build",
+    "lint": "eslint ./app ; tsc",
     "preview": "vite preview",
     "start:bun": "NODE_ENV=development bun build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
     "build:bun": "NODE_ENV=production bun build app/entry.tsx --outfile dist/bundle.js --target browser --minify",
