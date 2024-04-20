@@ -8,7 +8,7 @@ import Generate from './components/Generate.tsx'
 import Layout from './components/Layout.tsx'
 import Save from './components/Save/Save.tsx'
 import log from './log.ts'
-import '@fontsource-variable/roboto-flex/opsz.css' // 85K for latin .woff2 file
+import './font-face.css' // 85K for latin .woff2 file
 
 window.addEventListener('unhandledrejection', (ev) => {
   log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
