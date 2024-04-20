@@ -5,20 +5,20 @@
   "main": "app/entry.tsx",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "lint": "eslint ./app ; tsc",
-    "preview": "vite preview",
-    "start:bun": "NODE_ENV=development bun build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
-    "build:bun": "NODE_ENV=production bun build app/entry.tsx --outfile dist/bundle.js --target browser --minify",
-    "deploy": "npm run build && fish deploy.fish"
+    "dev": "bun -b vite dev",
+    "build": "bun -b vite build",
+    "lint": "bun -b eslint . ; bun -b tsc",
+    "preview": "bun -b vite preview",
+    "deploy": "bun -b run build && fish deploy.fish",
+    "dev:bun": "NODE_ENV=development bun -b build app/entry.tsx --outfile dist/bundle.js --target browser --watch --sourcemap=external --outdir dist",
+    "build:bun": "NODE_ENV=production bun -b build app/entry.tsx --outfile dist/bundle.js --target browser --minify"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomkel/genify.git"
   },
   "author": "Tommy Kelly",
-  "license": "UNLICENSED",
+  "license": "AGPL-3.0-or-later",
   "private": "true",
   "bugs": {
     "url": "https://github.com/tomkel/genify/issues"
@@ -62,6 +62,7 @@
     "vite": "^5.2.9",
     "webpack": "5",
     "webpack-cli": "5",
-    "webpack-dev-server": "5"
+    "webpack-dev-server": "5",
+    "@types/bun": "latest"
   }
 }
