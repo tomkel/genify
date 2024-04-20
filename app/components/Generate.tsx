@@ -60,11 +60,6 @@ export default function Generate() {
   return (
     <div style={contextStyles.mainChildren}>
       <CircularProgress sx={styles.progress} size={2.5} />
-      {/* make sure that all fonts are loaded */}
-      <span style={{ visibility: 'hidden', fontWeight: 300, fontFamily: 'Roboto' }}>a</span>
-      <span style={{ visibility: 'hidden', fontWeight: 400, fontFamily: 'Roboto' }}>a</span>
-      <span style={{ visibility: 'hidden', fontWeight: 500, fontFamily: 'Roboto' }}>a</span>
-      <span style={{ visibility: 'hidden', fontWeight: 700, fontFamily: 'Roboto' }}>a</span>
     </div>
   )
 }

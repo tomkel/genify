@@ -8,10 +8,7 @@ import Generate from './components/Generate.tsx'
 import Layout from './components/Layout.tsx'
 import Save from './components/Save/Save.tsx'
 import log from './log.ts'
-// import '@fontsource/roboto/300.css'
-// import '@fontsource/roboto/400.css'
-// import '@fontsource/roboto/500.css'
-// import '@fontsource/roboto/700.css'
+import '@fontsource-variable/roboto-flex/opsz.css' // 85K for latin .woff2 file
 
 window.addEventListener('unhandledrejection', (ev) => {
   log.error('Unhandled Rejection at: Promise ', ev, ' reason: ', ev.reason)
@@ -38,6 +35,9 @@ const theme = createTheme({
   // accent green: #84bd00
   // icon white: #ffffff
   palette,
+  typography: {
+    fontFamily: 'Roboto Flex Variable, Helvetica, system-ui, Arial, sans-serif',
+  },
   components: {
     MuiBackdrop: {
       styleOverrides: { root: { backgroundColor: grey[900] } },

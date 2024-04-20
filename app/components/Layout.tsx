@@ -9,7 +9,6 @@ type LayoutStyles = ReturnType<typeof getStyles>
 function getStyles(muiTheme: Theme) {
   return {
     container: {
-      fontFamily: 'Roboto, sans-serif',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
