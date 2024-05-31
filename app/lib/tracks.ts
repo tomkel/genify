@@ -9,8 +9,6 @@ export interface TrackIdsAndGenres {
 }
 class Tracks {
 
-  savedTracks = new Array<SavedTrack>()
-
   // key: artist ID
   // value: { tracks: [track IDs],
   //          genres: [genres] }
@@ -21,7 +19,7 @@ class Tracks {
    *  tracks
    *  genres
    */
-  mapArtists = () => {
+  mapArtists = (tracks: SavedTrack[]) => {
     let artistHasGenres = 0
 
     const mapArtistGenres = (artists: Artist[]) => {

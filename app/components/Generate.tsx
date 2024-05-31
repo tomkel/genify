@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
-import type { LayoutContext } from './Layout'
-import { setToken as spotifySetToken } from '../spotify.ts'
-import { usePlaylists } from '../playlists.ts'
-import log from '../log.ts'
-import type Styles from './Styles.d.ts'
+import type { LayoutContext } from './Layout.tsx'
+import { setToken as spotifySetToken } from '@/lib/spotify.ts'
+import { usePlaylists } from '@/lib/playlists.ts'
+import log from '@/lib/log.ts'
+import type { Styles } from './Styles.ts'
 
 const styles = {
   progress: {

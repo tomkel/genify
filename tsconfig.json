@@ -3,6 +3,7 @@
         "noEmit": true,
         "outDir": "dist",
         "skipLibCheck": true,
+        "paths": { "@/*": ["./app/*"] },
 
         "target": "ESNext",
         "lib": [ "ESNext", "DOM", "DOM.Iterable" ],

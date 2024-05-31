@@ -15,25 +15,8 @@ const getMatchedSpotifyPlaylists = (match: RegExp) =>
   )
 
 class Playlists {
-  newPlaylists: Map<string, Playlist>
 
-  constructor(useDom = false) {
-    this.newPlaylists = new Map()
-    if (import.meta.env.DEV) {
-      if (useDom) {
-        log.info('retrieving playlists from DOM')
-        const storedPlaylists = sessionStorage.getItem('playlists')
-        if (storedPlaylists) {
-          log.info('creating playlist object')
-          // const parsedPlaylists = JSON.parse(storedPlaylists) as Array<[string, string[]]>
-          // this.newPlaylists = new Map(parsedPlaylists)
-        } else {
-          log.info('no playlists found in DOM')
-        }
-      }
-    }
-  }
-
+  newPlaylists = new Map<string, Playlist>()
   tracks = new Tracks()
 
   totalTracks = () => this.tracks.savedTracks.length
@@ -70,17 +53,6 @@ class Playlists {
     log.info(this.newPlaylists)
     return this.newPlaylists
   }
-
-  gen = () => this.tracks.collect()
-    .then(this.tracks.mapArtists)
-    .then(this.createNewPlaylists)
-    .then((newPlaylists) => {
-      if (import.meta.env.DEV) {
-        // log.info('storing playlists in DOM')
-        // sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
-      }
-      return newPlaylists
-    })
 
   saveSpotifyPlaylists = () => {
     const promises: Array<Promise<void>> = []
@@ -120,6 +92,17 @@ class Playlists {
     this.newPlaylists.forEach((value, key) => newMap.set(key, value.length))
     return newMap
   }
+
+  gen = () => this.tracks.collect()
+    .then(this.tracks.mapArtists)
+    .then(this.createNewPlaylists)
+    .then((newPlaylists) => {
+      if (import.meta.env.DEV) {
+        // log.info('storing playlists in DOM')
+        // sessionStorage.setItem('playlists', JSON.stringify([...this.newPlaylists]))
+      }
+      return newPlaylists
+    })
 }
 
 const playlists = new Playlists()

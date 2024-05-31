@@ -2,8 +2,8 @@ import { memo } from 'react'
 import List from '@mui/material/List'
 import ListSubheader from '@mui/material/ListSubheader'
 import SaveListItem from './SaveListItem.tsx'
-import type Styles from '../Styles.d.ts'
 import { PlaylistNamesAndSizes } from './Save.tsx'
+import type { Styles } from '@/components/Styles.ts'
 
 const styles = {
   playlist: {

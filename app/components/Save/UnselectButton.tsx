@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { emphasize } from '@mui/system/colorManipulator'
-import type Styles from '../Styles.d.ts'
+import type { Styles } from '@/components/Styles.ts'
 
 function getStyles(muiTheme: Theme): Styles {
   return {

@@ -1,4 +1,4 @@
-import type Styles from './Styles.d.ts'
+import type { Styles } from './Styles.ts'
 
 const styles = {
   container: {

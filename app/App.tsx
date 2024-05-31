@@ -7,7 +7,7 @@ import End from './components/End.tsx'
 import Generate from './components/Generate.tsx'
 import Layout from './components/Layout.tsx'
 import Save from './components/Save/Save.tsx'
-import log from './log.ts'
+import log from './lib/log.ts'
 import './font-face.css' // 85K for latin .woff2 file
 
 window.addEventListener('unhandledrejection', (ev) => {

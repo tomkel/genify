@@ -12,7 +12,7 @@ async function getUserId(): Promise<string> {
   return _userId
 }
 
-function setAccessToken(accessToken: string) {
+function setToken(accessToken: string) {
   token = accessToken
 }
 
@@ -115,7 +115,7 @@ function fetchTracks(offset: number): Promise<Page<SavedTrack>> {
   return fetchGeneric<Page<SavedTrack>>('https://api.spotify.com/v1/me/tracks', { limit: 50, offset })
 }
 
-function fetchAllTracks(): Promise<SavedTrack[]> {
+function getAllTracks(): Promise<SavedTrack[]> {
   return fetchManyUnknownSize<SavedTrack>(fetchTracks)
 }
 
@@ -125,7 +125,7 @@ function fetchArtists(ids: string[]): Promise<Artists> {
   return fetchGeneric<Artists>('https://api.spotify.com/v1/artists', { ids })
 }
 
-function fetchAllArtists(ids: string[]): Promise<Artist[]> {
+function getAllArtists(ids: string[]): Promise<Artist[]> {
   return fetchManyIds<Artist>(fetchArtists, ids, 50, 'artists')
 }
 
@@ -135,7 +135,7 @@ function fetchAlbums(ids: string[]): Promise<Albums> {
   return fetchGeneric<Albums>('https://api.spotify.com/v1/albums', { ids })
 }
 
-function fetchAllAlbums(ids: string[]): Promise<Album[]> {
+function getAllAlbums(ids: string[]): Promise<Album[]> {
   return fetchManyIds<Album>(fetchAlbums, ids, 20, 'albums')
 }
 
@@ -179,10 +179,11 @@ async function unfollowPlaylist(playlistId: string) {
 export {
   addTracksToPlaylist,
   createPlaylist,
-  fetchAllAlbums as getAllAlbums,
-  fetchAllArtists as getAllArtists,
+  getAllAlbums,
+  getAllArtists,
   getAllPlaylists,
-  fetchAllTracks as getAllTracks,
-  getUserId, setAccessToken as setToken,
+  getAllTracks,
+  getUserId,
+  setToken,
   unfollowPlaylist,
 }
