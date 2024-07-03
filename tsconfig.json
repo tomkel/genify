@@ -8,7 +8,7 @@
         "target": "ESNext",
         "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
         "types": ["vite/client"],
-        "allowJs": false,
+        "allowJs": true,
         "jsx": "react-jsx",
 
         "isolatedModules": true, // vite
@@ -25,5 +25,5 @@
         "noUnusedLocals": false,
         "noUnusedParameters": true,
     },
-    // "include": ["app"]
+    "include": ["./app/", "./*.ts", "./eslint.config.mjs"]
 }

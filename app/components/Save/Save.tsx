@@ -9,12 +9,12 @@ import Divider from '@mui/material/Divider'
 import Fab from '@mui/material/Fab'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { Theme, useTheme } from '@mui/material/styles'
-// import { updates as fetchQueue } from '../../fetch-queue'
-import { usePlaylists } from '@/lib/playlists.ts'
 import log from '@/lib/log.ts'
 import SaveList from './SaveList.tsx'
 import UnselectButton from './UnselectButton.tsx'
 import type { Styles } from '@/components/Styles.ts'
+import { usePlaylistStore } from '@/lib/state.ts'
+import { saveNewPlaylists, unfollowSpotifyPlaylists } from '@/lib/playlists.ts'
 
 const getStyles = (theme: Theme): Styles => ({
   container: {
@@ -61,26 +61,17 @@ const getStyles = (theme: Theme): Styles => ({
   },
 })
 
-const falseArr = (size: number): boolean[] => {
-  return Array<boolean>(size).fill(false)
-}
-const trueArr = (size: number): boolean[] => {
-  return Array<boolean>(size).fill(true)
-}
-
 let ranEffect = false
-export type PlaylistNamesAndSizes = Array<[playlistName: string, playlistSize: number]>
+export type PlaylistNamesAndSizes = Array<Readonly<[playlistName: string, playlistSize: number]>>
 export default function Save() {
-  const playlists = usePlaylists()
   const theme = useTheme()
   const styles = getStyles(theme)
 
-  const totalTracks = playlists.totalTracks()
-  const playlistNamesAndSizes: PlaylistNamesAndSizes = Array.from(playlists.getPlaylistNamesAndSizeMap().entries())
+  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  const renderPlaylists = usePlaylistStore(state => state.renderPlaylists)
 
   const [deleteExistingPlaylists, setDeleteExisting] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [playlistChecked, setPlaylistChecked] = useState<boolean[]>(() => playlistNamesAndSizes.map(([,size]) => size > 1))
 
   const navigate = useNavigate()
 
@@ -93,33 +84,29 @@ export default function Save() {
     }
     if (ranEffect) throw new Error('already ran saving effect')
 
-    void playlists.save(playlistChecked, deleteExistingPlaylists)
-      .then(() => { navigate('/end') })
-    ranEffect = true
-  }, [saving])
-
-  const updateCheckedItem = (index: number, checked: boolean) => {
-    const newCheckedArr = [...playlistChecked]
-    newCheckedArr[index] = checked
-    setPlaylistChecked(newCheckedArr)
-  }
-
-  const unselectMany = (minTracks: number) => {
-    for (let i = 0; i < playlistNamesAndSizes.length; i += 1) {
-      const numTracks = playlistNamesAndSizes[i][1]
-      if (numTracks < minTracks) {
-        const newCheckedArr = [...playlistChecked]
-        for (let j = i; j < playlistChecked.length; j += 1) {
-          newCheckedArr[j] = false
-        }
-        setPlaylistChecked(newCheckedArr)
-        return
-      }
+    let p = Promise.resolve()
+    if (deleteExistingPlaylists) {
+      p = unfollowSpotifyPlaylists()
     }
-  }
 
-  const checkAll = () => { setPlaylistChecked(trueArr(playlistChecked.length)) }
-  const uncheckAll = () => { setPlaylistChecked(falseArr(playlistChecked.length)) }
+    void p.then(
+      () => saveNewPlaylists(genrePlaylists)
+    ).then(
+      () => { navigate('/end') }
+    )
+
+    ranEffect = true
+  }, [saving]) // eslint-disable-line react-hooks/exhaustive-deps
+
+
+  const checkAll = () => {
+    genrePlaylists.forEach(playlist => (playlist.selected = true))
+    renderPlaylists()
+  }
+  const uncheckAll = () => {
+    genrePlaylists.forEach(playlist => (playlist.selected = false))
+    renderPlaylists()
+  }
 
   const savingMarkup = saving ? (
     <div>
@@ -134,11 +121,7 @@ export default function Save() {
       <div style={styles.buttonContainer}>
         <Button variant="contained" color="primary" sx={styles.button} onClick={checkAll}>Select All</Button>
         <Button variant="contained" color="primary" sx={styles.button} onClick={uncheckAll}>Select None</Button>
-        <UnselectButton
-          unselectAction={unselectMany}
-          min={2}
-          style={styles.button}
-        />
+        <UnselectButton style={styles.button} />
       </div>
       <FormControlLabel
         control={(
@@ -153,13 +136,7 @@ export default function Save() {
 
       <Divider />
 
-      <SaveList
-        playlistChecked={playlistChecked}
-        updateCheckedItem={updateCheckedItem}
-        playlistNamesAndSizes={playlistNamesAndSizes}
-        totalTracks={totalTracks}
-        numTracksCategorized={playlists.numTracksCategorized}
-      />
+      <SaveList />
 
       <Fab color="secondary" sx={styles.doneButton} onClick={() => { setSaving(true) }}>
         <DoneIcon />

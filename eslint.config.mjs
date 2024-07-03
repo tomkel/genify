@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable import-x/no-named-as-default-member */
 
 import eslint from '@eslint/js'
@@ -9,7 +12,22 @@ import hooksPlugin from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import barrel from 'eslint-plugin-barrel-files'
 import importPlugin from 'eslint-plugin-import-x'
+import { fixupPluginRules } from '@eslint/compat'
 
+// https://github.com/facebook/react/issues/28313
+const hooksFlat = /** @type {const} */({
+  plugins: {
+    'react-hooks': {
+      rules: fixupPluginRules(hooksPlugin).rules,
+    },
+  },
+  rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+  },
+})
+
+// https://github.com/eslint-stylistic/eslint-stylistic/blob/main/packages/eslint-plugin/configs/customize.ts
 const stylisticCustomized = stylistic.configs.customize({
   flat: true,
   quoteProps: 'as-needed',
@@ -30,6 +48,7 @@ const config = tseslint.config(
       '@stylistic/padded-blocks': 'off',
       '@stylistic/multiline-ternary': 'off',
       '@stylistic/max-statements-per-line': ['error', { max: 2 }],
+      '@stylistic/operator-linebreak': 'off',
     },
   },
   {
@@ -58,6 +77,7 @@ const config = tseslint.config(
       ],
       '@typescript-eslint/no-shadow': ['error', { ignoreTypeValueShadow: false }],
       '@typescript-eslint/no-restricted-imports': ['error', { patterns: ['**/index*'] }],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     },
   },
   {
@@ -70,13 +90,7 @@ const config = tseslint.config(
       },
     },
   },
-  {
-    plugins: { 'react-hooks': hooksPlugin },
-    rules: {
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-    },
-  },
+  hooksFlat,
   {
     plugins: { 'react-refresh': reactRefresh },
     rules: {

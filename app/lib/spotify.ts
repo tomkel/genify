@@ -115,7 +115,7 @@ function fetchTracks(offset: number): Promise<Page<SavedTrack>> {
   return fetchGeneric<Page<SavedTrack>>('https://api.spotify.com/v1/me/tracks', { limit: 50, offset })
 }
 
-function getAllTracks(): Promise<SavedTrack[]> {
+function getAllSavedTracks(): Promise<SavedTrack[]> {
   return fetchManyUnknownSize<SavedTrack>(fetchTracks)
 }
 
@@ -182,7 +182,7 @@ export {
   getAllAlbums,
   getAllArtists,
   getAllPlaylists,
-  getAllTracks,
+  getAllSavedTracks,
   getUserId,
   setToken,
   unfollowPlaylist,

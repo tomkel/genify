@@ -5,7 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 
-interface SaveListItemProps {
+type SaveListItemProps = {
   primaryText: string
   secondaryText: string
   style: React.CSSProperties
@@ -30,5 +30,3 @@ export default memo(function SaveListItem(props: SaveListItemProps) {
     </ListItem>
   )
 })
-
-// ref={(element) => { this.props.refArr[i] = element }}

@@ -2,8 +2,9 @@ import { memo } from 'react'
 import List from '@mui/material/List'
 import ListSubheader from '@mui/material/ListSubheader'
 import SaveListItem from './SaveListItem.tsx'
-import { PlaylistNamesAndSizes } from './Save.tsx'
 import type { Styles } from '@/components/Styles.ts'
+import { getTotalTracks } from '@/lib/playlists.ts'
+import { useTrackStore, usePlaylistStore } from '@/lib/state.ts'
 
 const styles = {
   playlist: {
@@ -12,44 +13,34 @@ const styles = {
   },
 } satisfies Styles
 
-interface SaveListProps {
-  playlistChecked: boolean[]
-  updateCheckedItem: (index: number, checked: boolean) => void
-  playlistNamesAndSizes: PlaylistNamesAndSizes
-  totalTracks: number
-  numTracksCategorized: number
-}
-export default memo(function SaveList(props: SaveListProps) {
-  const {
-    playlistChecked,
-    updateCheckedItem,
-    playlistNamesAndSizes,
-    totalTracks,
-    numTracksCategorized } = props
+export default memo(function SaveList() {
+  const totalTracks = useTrackStore(state => state.numTotalTracks)
+  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  const numTracksCategorized = getTotalTracks(genrePlaylists)
 
-  const listItems = playlistChecked.map((isCurrChecked, i) => {
-    const onCheck = (ev: React.ChangeEvent<HTMLInputElement>) => { updateCheckedItem(i, ev.target.checked) }
-    const [playlistName, playlistSize] = playlistNamesAndSizes[i]
-    return (
-      <SaveListItem
-        key={`li${i}`}
-        style={styles.playlist}
-        primaryText={playlistName}
-        secondaryText={`${playlistSize} tracks`}
-        checked={isCurrChecked}
-        onCheck={onCheck}
-      />
-    )
-  })
+  const li = Array.from(genrePlaylists.entries())
+    .toSorted((a, b) => a[1].tracks.size - b[1].tracks.size)
+    .map(([name, playlist]) => {
+      return (
+        <SaveListItem
+          style={styles.playlist}
+          key={name}
+          primaryText={name}
+          secondaryText={`${playlist.tracks.size} tracks`}
+          checked={playlist.selected}
+          onCheck={(_, checked) => playlist.selected = checked}
+        />
+      )
+    })
 
   return (
     <List>
       <div>
         <ListSubheader>
-          {numTracksCategorized}/{totalTracks} tracks have genre metadata and were categorized into {playlistNamesAndSizes.length} playlists
+          {numTracksCategorized}/{totalTracks} tracks have genre metadata and were categorized into {genrePlaylists.size} playlists
         </ListSubheader>
       </div>
-      {listItems}
+      {li}
     </List>
   )
 })

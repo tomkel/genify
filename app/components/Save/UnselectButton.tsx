@@ -4,6 +4,8 @@ import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { emphasize } from '@mui/system/colorManipulator'
 import type { Styles } from '@/components/Styles.ts'
+import { usePlaylistStore } from '@/lib/state.ts'
+import { unselectSmallPlaylists } from '@/lib/playlists.ts'
 
 function getStyles(muiTheme: Theme): Styles {
   return {
@@ -18,19 +20,25 @@ function getStyles(muiTheme: Theme): Styles {
   }
 }
 
-interface UnselectButtonProps {
-  min: number
-  unselectAction: (minTracks: number) => void
+type UnselectButtonProps = {
   style: React.CSSProperties
 }
-export default function UnselectButton({ min = 2, unselectAction, style }: UnselectButtonProps) {
+export default function UnselectButton({ style }: UnselectButtonProps) {
   const theme = useTheme()
   const styles = getStyles(theme)
-  const [val, setVal] = useState(2)
 
-  const dec = () => { if (val > min) setVal(val - 1) }
-  const inc = () => { setVal(val + 1) }
-  const doAction = () => { unselectAction(val) }
+  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  const renderPlaylists = usePlaylistStore(state => state.renderPlaylists)
+
+  const min = 2
+  const [curr, setCurr] = useState(min)
+
+  const dec = () => { if (curr > min) setCurr(curr - 1) }
+  const inc = () => { setCurr(curr + 1) }
+  const doAction = () => {
+    unselectSmallPlaylists(genrePlaylists, curr)
+    renderPlaylists()
+  }
 
   return (
     <div style={Object.assign({}, style, styles.container)}>
@@ -43,7 +51,7 @@ export default function UnselectButton({ min = 2, unselectAction, style }: Unsel
         variant="contained"
         color="primary"
         onClick={doAction}
-      >{`Unselect playlists with less than ${val} tracks`}</Button>
+      >{`Unselect playlists with less than ${curr} tracks`}</Button>
       <Button
         variant="contained"
         onClick={inc}
