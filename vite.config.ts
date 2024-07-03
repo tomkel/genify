@@ -27,7 +27,7 @@ const targetsESBuild = [
   'safari17.3',
 ]
 
-const dev = import.meta.env.DEV
+const dev = import.meta.env.NODE_ENV === 'development'
 
 export default defineConfig({
   plugins: [
@@ -37,7 +37,7 @@ export default defineConfig({
     }),
   ],
   root: './app',
-  base: '/genify',
+  base: dev ? '/' : '/genify',
   css: {
     devSourcemap: dev,
     transformer: 'lightningcss',

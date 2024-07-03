@@ -19,16 +19,13 @@ export default memo(function SaveList() {
   const numTracksCategorized = getTotalTracks(genrePlaylists)
 
   const li = Array.from(genrePlaylists.entries())
-    .toSorted((a, b) => a[1].tracks.size - b[1].tracks.size)
-    .map(([name, playlist]) => {
+    .toSorted((a, b) => b[1].tracks.size - a[1].tracks.size)
+    .map(([name]) => {
       return (
         <SaveListItem
           style={styles.playlist}
           key={name}
-          primaryText={name}
-          secondaryText={`${playlist.tracks.size} tracks`}
-          checked={playlist.selected}
-          onCheck={(_, checked) => playlist.selected = checked}
+          genre={name}
         />
       )
     })

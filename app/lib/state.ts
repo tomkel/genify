@@ -1,17 +1,48 @@
 import { create } from 'zustand'
+import { immer } from 'zustand/middleware/immer'
 import { Genre, GenrePlaylists, Playlist } from './types.ts'
+import { unselectSmallPlaylists } from './playlists.ts'
 
 type PlaylistState = {
   genrePlaylists: GenrePlaylists
-  // setGenrePlaylists: (gp: GenrePlaylists) => void
-  renderPlaylists: () => void
+  setSelected: (genre: string, selected: boolean) => void
+  checkAll: () => void
+  uncheckAll: () => void
+  unselectSmall: (lessThanNumTracks: number) => void
 }
 
-export const usePlaylistStore = create<PlaylistState>()((set, get) => ({
-  genrePlaylists: new Map<Genre, Playlist>() satisfies GenrePlaylists,
-  // setGenrePlaylists: (gp: GenrePlaylists) => { set({ genrePlaylists: gp }) },
-  renderPlaylists: () => { set({ genrePlaylists: get().genrePlaylists }) } // new obj
-}))
+export const usePlaylistStore = create<PlaylistState>()(
+  immer(set => ({
+    genrePlaylists: new Map<Genre, Playlist>() satisfies GenrePlaylists,
+    // setGenrePlaylists: (gp: GenrePlaylists) => { set({ genrePlaylists: gp }) },
+    setSelected: (genre: string, selected: boolean) => {
+      set((state) => {
+        const playlist = state.genrePlaylists.get(genre)
+        if (!playlist) throw new Error(`playlist ${genre} did not exist`)
+        playlist.selected = selected
+      })
+    },
+    checkAll: () => {
+      set((state) => {
+        state.genrePlaylists.forEach((playlist) => {
+          playlist.selected = true
+        })
+      })
+    },
+    uncheckAll: () => {
+      set((state) => {
+        state.genrePlaylists.forEach((playlist) => {
+          playlist.selected = false
+        })
+      })
+    },
+    unselectSmall: (lessThanNumTracks: number) => {
+      set((state) => {
+        unselectSmallPlaylists(state.genrePlaylists, lessThanNumTracks)
+      })
+    }
+  })),
+)
 
 
 type TrackState = {

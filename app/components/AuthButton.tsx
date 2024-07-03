@@ -20,19 +20,16 @@ const styles = {
 
 function getAuthURL() {
   const authURL = 'https://accounts.spotify.com/authorize'
-  // const stateString = crypto.randomBytes(64).toString('hex')
   const redirectOrigin = import.meta.env.PROD
-    ? 'https://tkel.ly'
+    ? 'https://tkel.ly/genify'
     : 'http://localhost:5173'
+  const redirectUrl = redirectOrigin + '/generate'
 
-  // `new URL` will throw with invalid result, although it seems pretty tolerant
-  const redirectUrl = new URL(`${import.meta.env.BASE_URL}/generate`, redirectOrigin)
-
+  // https://developer.spotify.com/documentation/web-api/tutorials/implicit-flow
   const authParams = new URLSearchParams({
     client_id: '38dfce7a65f84684b6678907870b0cec',
     response_type: 'token',
     redirect_uri: redirectUrl.toString(),
-    // state: stateString,
     scope: 'playlist-modify-public user-library-read',
   })
   return `${authURL}?${authParams.toString()}`

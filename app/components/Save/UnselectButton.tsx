@@ -5,7 +5,6 @@ import type { Theme } from '@mui/material/styles'
 import { emphasize } from '@mui/system/colorManipulator'
 import type { Styles } from '@/components/Styles.ts'
 import { usePlaylistStore } from '@/lib/state.ts'
-import { unselectSmallPlaylists } from '@/lib/playlists.ts'
 
 function getStyles(muiTheme: Theme): Styles {
   return {
@@ -27,8 +26,7 @@ export default function UnselectButton({ style }: UnselectButtonProps) {
   const theme = useTheme()
   const styles = getStyles(theme)
 
-  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
-  const renderPlaylists = usePlaylistStore(state => state.renderPlaylists)
+  const unselectSmall = usePlaylistStore(state => state.unselectSmall)
 
   const min = 2
   const [curr, setCurr] = useState(min)
@@ -36,8 +34,7 @@ export default function UnselectButton({ style }: UnselectButtonProps) {
   const dec = () => { if (curr > min) setCurr(curr - 1) }
   const inc = () => { setCurr(curr + 1) }
   const doAction = () => {
-    unselectSmallPlaylists(genrePlaylists, curr)
-    renderPlaylists()
+    unselectSmall(curr)
   }
 
   return (

@@ -1,19 +1,23 @@
 import { memo } from 'react'
-import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
+import Checkbox from '@mui/material/Checkbox'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import { usePlaylistStore } from '@/lib/state.ts'
 
 type SaveListItemProps = {
-  primaryText: string
-  secondaryText: string
   style: React.CSSProperties
-  onCheck: CheckboxProps['onChange']
-  checked: boolean
+  genre: string
 }
 export default memo(function SaveListItem(props: SaveListItemProps) {
-  const { primaryText, secondaryText, style, onCheck, checked } = props
+  const { style, genre } = props
+
+  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  const playlist = genrePlaylists.get(genre)
+  if (!playlist) throw new Error(`missing playlist ${genre} in checkbox`)
+
+  const setSelected = usePlaylistStore(state => state.setSelected)
 
   return (
     <ListItem sx={style}>
@@ -21,11 +25,11 @@ export default memo(function SaveListItem(props: SaveListItemProps) {
         <ListItemIcon>
           <Checkbox
             edge="start"
-            checked={checked}
-            onChange={onCheck}
+            checked={playlist.selected}
+            onChange={(_, newCheckedState) => { setSelected(genre, newCheckedState) }}
           />
         </ListItemIcon>
-        <ListItemText primary={primaryText} secondary={secondaryText} />
+        <ListItemText primary={genre} secondary={`${playlist.tracks.size} tracks`} />
       </ListItemButton>
     </ListItem>
   )

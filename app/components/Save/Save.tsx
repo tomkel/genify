@@ -68,7 +68,8 @@ export default function Save() {
   const styles = getStyles(theme)
 
   const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
-  const renderPlaylists = usePlaylistStore(state => state.renderPlaylists)
+  const checkAll = usePlaylistStore(state => state.checkAll)
+  const uncheckAll = usePlaylistStore(state => state.uncheckAll)
 
   const [deleteExistingPlaylists, setDeleteExisting] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -97,16 +98,6 @@ export default function Save() {
 
     ranEffect = true
   }, [saving]) // eslint-disable-line react-hooks/exhaustive-deps
-
-
-  const checkAll = () => {
-    genrePlaylists.forEach(playlist => (playlist.selected = true))
-    renderPlaylists()
-  }
-  const uncheckAll = () => {
-    genrePlaylists.forEach(playlist => (playlist.selected = false))
-    renderPlaylists()
-  }
 
   const savingMarkup = saving ? (
     <div>
