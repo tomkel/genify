@@ -15,6 +15,7 @@ function getDone() {
   return totalRequests - queue.length
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function emitUpdate() {
   // updates.emit('update', getDone(), getTotal())
 }
