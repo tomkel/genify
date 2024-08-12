@@ -65,7 +65,7 @@ export default function Generate() {
     void tracksIntoPlaylists(genrePlaylists)
       .then((totalTracks) => {
         setTotalTracks(totalTracks)
-        navigate('/save')
+        navigate('../save', { relative: 'path' })
       })
 
     hasRun = true
@@ -78,7 +78,7 @@ export default function Generate() {
 
   return (
     <div style={contextStyles.mainChildren}>
-      <CircularProgress sx={styles.progress} size={2.5} />
+      <CircularProgress sx={styles.progress} size={250} color="secondary" />
     </div>
   )
 }

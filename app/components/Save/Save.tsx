@@ -96,7 +96,7 @@ export default function Save() {
 
     const genrePlaylists = usePlaylistStore.getState().genrePlaylists
     void p.then(() => saveNewPlaylists(genrePlaylists))
-      .then(() => { navigate('/end') })
+      .then(() => { navigate('../end', { relative: 'path' }) })
 
     ranEffect = true
   }, [saving]) // eslint-disable-line react-hooks/exhaustive-deps
