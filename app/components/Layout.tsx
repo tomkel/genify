@@ -13,7 +13,7 @@ function getStyles(muiTheme: Theme) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'space-between',
-      minHeight: '97vh',
+      minHeight: '100vh',
       height: '100%',
       paddingTop: '1vh',
       paddingRight: '10px',

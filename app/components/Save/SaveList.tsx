@@ -15,7 +15,8 @@ const styles = {
 
 export default memo(function SaveList() {
   const totalTracks = useTrackStore(state => state.numTotalTracks)
-  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  // const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
+  const genrePlaylists = usePlaylistStore.getState().genrePlaylists
   const numTracksCategorized = getTotalTracks(genrePlaylists)
 
   const li = Array.from(genrePlaylists.entries())
@@ -33,6 +34,7 @@ export default memo(function SaveList() {
   return (
     <List>
       <div>
+        {/* ListSubheader has z-index: 1 */}
         <ListSubheader>
           {numTracksCategorized}/{totalTracks} tracks have genre metadata and were categorized into {genrePlaylists.size} playlists
         </ListSubheader>

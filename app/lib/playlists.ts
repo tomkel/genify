@@ -10,16 +10,24 @@ const getMatchedSpotifyPlaylists = (match: RegExp) =>
 
 export const unfollowSpotifyPlaylists = () =>
   getMatchedSpotifyPlaylists(/\[.*?genify.*?\]/).then(async (matched) => {
+    /* used to unfollowPlaylist.
+       Without this before the map loop, getUserId will be called for each unfollowPlaylist */
+    await spotify.getUserId()
+
     await Promise.all(matched.map(spotify.unfollowPlaylist))
     log.info(matched.length, 'playlists cleared')
   })
 
 // playlistsToSave is a boolean array
 export const saveNewPlaylists = async (playlistsToSave: GenrePlaylists) => {
-  log.info('saving')
+  log.info('saving:')
+  log.debug(playlistsToSave)
+
+  /* used to createPlaylist.
+     Without this before the forEach loop, getUserId will be called forEach createPlaylist */
+  await spotify.getUserId()
 
   const promises: Array<Promise<void>> = []
-
   playlistsToSave.forEach((playlist, name) => {
     if (playlist.selected) {
       promises.push(
@@ -32,7 +40,6 @@ export const saveNewPlaylists = async (playlistsToSave: GenrePlaylists) => {
       )
     }
   })
-
   return Promise.all(promises)
 }
 

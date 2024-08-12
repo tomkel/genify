@@ -3,13 +3,13 @@ import react from '@vitejs/plugin-react-swc'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import type { Targets } from 'lightningcss'
 
-/** targets updated jul 1 2024 */
+/** targets updated aug 11 2024 */
 // >1% in NA, last 3
 // https://caniuse.com/mdn-javascript_builtins_set_union
 const targetsLightningCSS = {
   android: 126,
-  chrome: 123,
-  edge: 124,
+  chrome: 125,
+  edge: 125,
   firefox: 127,
   // ios_saf: (16 << 16) | (7 << 8), // v16.7
   ios_saf: (17 << 16) | (3 << 8), // v17.3
@@ -19,9 +19,9 @@ const targetsLightningCSS = {
 
 // https://esbuild.github.io/api/#target
 const targetsESBuild = [
-  'es2024',
-  'chrome123',
-  'edge124',
+  'es2022',
+  'chrome125',
+  'edge125',
   'firefox127',
   'ios17.3',
   'safari17.3',

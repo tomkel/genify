@@ -15,6 +15,7 @@ import UnselectButton from './UnselectButton.tsx'
 import type { Styles } from '@/components/Styles.ts'
 import { usePlaylistStore } from '@/lib/state.ts'
 import { saveNewPlaylists, unfollowSpotifyPlaylists } from '@/lib/playlists.ts'
+import { Box } from '@mui/material'
 
 const getStyles = (theme: Theme): Styles => ({
   container: {
@@ -23,6 +24,9 @@ const getStyles = (theme: Theme): Styles => ({
     paddingTop: '0.1rem',
     backgroundColor: theme.palette.background.paper,
   },
+  backdrop: {
+    zIndex: 2, // to be higher than ListSubheader
+  },
   progress: {
     margin: 'auto',
     position: 'fixed',
@@ -30,6 +34,7 @@ const getStyles = (theme: Theme): Styles => ({
     bottom: 0,
     left: 0,
     right: 0,
+    zIndex: 3, // to be higher than ListSubheader + Backdrop
   },
   doneButton: {
     position: 'fixed',
@@ -67,7 +72,6 @@ export default function Save() {
   const theme = useTheme()
   const styles = getStyles(theme)
 
-  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
   const checkAll = usePlaylistStore(state => state.checkAll)
   const uncheckAll = usePlaylistStore(state => state.uncheckAll)
 
@@ -90,21 +94,23 @@ export default function Save() {
       p = unfollowSpotifyPlaylists()
     }
 
-    void p.then(
-      () => saveNewPlaylists(genrePlaylists)
-    ).then(
-      () => { navigate('/end') }
-    )
+    const genrePlaylists = usePlaylistStore.getState().genrePlaylists
+    void p.then(() => saveNewPlaylists(genrePlaylists))
+      .then(() => { navigate('/end') })
 
     ranEffect = true
   }, [saving]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const savingMarkup = saving ? (
-    <div>
-      <Backdrop open />
-      <CircularProgress size={2.5} sx={styles.progress} />
-    </div>
-  ) : <></>
+    <Box>
+      <Backdrop sx={styles.backdrop} open />
+      <CircularProgress size={250} color="secondary" sx={styles.progress} />
+    </Box>
+  ) : (
+    <Fab color="secondary" sx={styles.doneButton} onClick={() => { setSaving(true) }}>
+      <DoneIcon />
+    </Fab>
+  )
 
   return (
     <div style={Object.assign({}, styles.mainChildren, styles.container)}>
@@ -129,9 +135,6 @@ export default function Save() {
 
       <SaveList />
 
-      <Fab color="secondary" sx={styles.doneButton} onClick={() => { setSaving(true) }}>
-        <DoneIcon />
-      </Fab>
       {savingMarkup}
     </div>
   )

@@ -3,7 +3,7 @@ let intervalId = 0
 let currInterval = 0
 let totalRequests = 0
 
-const updates = new EventTarget()
+// const updates = new EventTarget()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getTotal() {
@@ -25,19 +25,20 @@ function process() {
     intervalId = 0
     currInterval = 0
     totalRequests = 0
-    updates.dispatchEvent(new CustomEvent('done'))
+    // updates.dispatchEvent(new CustomEvent('done'))
     return
   }
   const req = queue.shift()
   if (!req) throw new Error('queue was empty somehow')
   void req()
-  emitUpdate()
+  // emitUpdate()
 }
 
-function enqueue(element: () => Promise<unknown>, interval = 100): () => Promise<unknown> {
+// use observable instead of promise? push vs pull
+function enqueue<T>(element: () => Promise<T>, interval = 100): () => Promise<T> {
   queue.push(element)
   totalRequests += 1
-  emitUpdate()
+  // emitUpdate()
   if (!intervalId) {
     currInterval = interval
     intervalId = window.setInterval(process, interval)
@@ -51,5 +52,7 @@ function enqueue(element: () => Promise<unknown>, interval = 100): () => Promise
   return element
 }
 
-export default enqueue
-export { updates }
+export {
+  enqueue,
+  // updates,
+}

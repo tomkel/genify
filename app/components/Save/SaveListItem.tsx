@@ -4,6 +4,7 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import { useShallow } from 'zustand/react/shallow'
 import { usePlaylistStore } from '@/lib/state.ts'
 
 type SaveListItemProps = {
@@ -13,20 +14,19 @@ type SaveListItemProps = {
 export default memo(function SaveListItem(props: SaveListItemProps) {
   const { style, genre } = props
 
-  const genrePlaylists = usePlaylistStore(state => state.genrePlaylists)
-  const playlist = genrePlaylists.get(genre)
+  const playlist = usePlaylistStore(useShallow(state => state.genrePlaylists.get(genre)))
   if (!playlist) throw new Error(`missing playlist ${genre} in checkbox`)
 
-  const setSelected = usePlaylistStore(state => state.setSelected)
+  const toggleSelected = usePlaylistStore(state => state.toggleSelected)
+
 
   return (
     <ListItem sx={style}>
-      <ListItemButton>
+      <ListItemButton onClick={() => { toggleSelected(genre) }}>
         <ListItemIcon>
           <Checkbox
             edge="start"
             checked={playlist.selected}
-            onChange={(_, newCheckedState) => { setSelected(genre, newCheckedState) }}
           />
         </ListItemIcon>
         <ListItemText primary={genre} secondary={`${playlist.tracks.size} tracks`} />

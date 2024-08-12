@@ -1,19 +1,26 @@
 import type { Album, Albums, Artist, Artists, MaxInt, Page, Playlist, SavedTrack, SimplifiedPlaylist, SnapshotReference, UserProfile } from '@spotify/web-api-ts-sdk'
-import fetchQueue from './fetch-queue.ts'
+import { enqueue } from './fetch-queue.ts'
 import log from './log.ts'
 
-let token = ''
-let _userId = ''
+type SpotifyState = {
+  token: string
+  userId: string
+}
+const spotifyState = {
+  token: '',
+  userId: '',
+} satisfies SpotifyState
+
 
 async function getUserId(): Promise<string> {
-  if (!_userId) {
-    _userId = await fetchGeneric<UserProfile>('https://api.spotify.com/v1/me').then(json => json.id)
+  if (!spotifyState.userId) {
+    spotifyState.userId = await fetchGeneric<UserProfile>('https://api.spotify.com/v1/me').then(json => json.id)
   }
-  return _userId
+  return spotifyState.userId
 }
 
 function setToken(accessToken: string) {
-  token = accessToken
+  spotifyState.token = accessToken
 }
 
 type ApiQueryString = { limit?: MaxInt<50>, offset?: number, ids?: string[] } | null
@@ -21,7 +28,7 @@ type ContentType = UserProfile | Page<SavedTrack> | Artists | Albums | Playlist 
 type FetchGeneric = <T extends ContentType>(url: string, qs?: ApiQueryString, postData?: object | null, method?: string) => Promise<T>
 const fetchGeneric: FetchGeneric = <T extends ContentType>(url: string, qs?: ApiQueryString, postData?: object | null, method?: string): Promise<T> => {
   const headers: HeadersInit = {}
-  headers.Authorization = `Bearer ${token}`
+  headers.Authorization = `Bearer ${spotifyState.token}`
 
   const opts: RequestInit = {}
   if (method) {
@@ -43,18 +50,14 @@ const fetchGeneric: FetchGeneric = <T extends ContentType>(url: string, qs?: Api
     qsURL += `?${params.toString()}`
   }
 
-  let tries = 1
+  const tries = 5
+  let currTry = 1
 
-  const promiseFetchFunc = (interval: number): Promise<T> =>
+  const retryFetchFunc = (interval: number): Promise<T> =>
     new Promise((resolve, reject) =>
-      fetchQueue(() => fetch(qsURL, opts).then((r) => {
+      enqueue(() => fetch(qsURL, opts).then((r) => {
         if (!r.ok) {
           const errTxt = `Error ${r.status}: ${r.statusText}`
-          if (tries < 5) {
-            log.error(`Retrying ${tries}`)
-            tries += 1
-            return promiseFetchFunc(100 * tries)
-          }
           return Promise.reject(new Error(errTxt))
         }
         const ctHeader = r.headers.get('Content-Type') ?? ''
@@ -62,11 +65,19 @@ const fetchGeneric: FetchGeneric = <T extends ContentType>(url: string, qs?: Api
           return r.json()
         }
         return r.text()
+      }).catch((e: unknown) => {
+        if (currTry < tries) {
+          log.error(`Retrying ${currTry}`)
+          currTry += 1
+          return retryFetchFunc(100 * currTry)
+        }
+        if (!(e instanceof Error)) return Promise.reject(new Error('unknown error'))
+        return Promise.reject(e)
       // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
       }).then(resolve).catch(reject), interval)
     )
 
-  return promiseFetchFunc(100)
+  return retryFetchFunc(100)
 }
 
 type ArtistsAndAlbums = Partial<Artists & Albums>
@@ -149,18 +160,19 @@ async function createPlaylist(name: string): Promise<string> {
   return json.id
 }
 
-function addTracksToPlaylist(tracks: Set<string>, playlist: string): Promise<SnapshotReference[]> {
-  return getUserId().then((userId) => {
-    const promises: Array<Promise<SnapshotReference>> = []
-    const tracksArr = Array.from(tracks)
-    for (let i = 0; i < tracks.size; i += 100) {
-      promises.push(
-        fetchGeneric<SnapshotReference>(`https://api.spotify.com/v1/users/${userId}/playlists/${playlist}/tracks`,
-          null, { uris: tracksArr.slice(i, i + 100).map(t => `spotify:track:${t}`) })
-      )
-    }
-    return Promise.all(promises)
-  })
+async function addTracksToPlaylist(tracks: Set<string>, playlist: string): Promise<SnapshotReference[]> {
+  const userId = await getUserId()
+
+  const promises: Array<Promise<SnapshotReference>> = []
+  const tracksArr = Array.from(tracks)
+  for (let i = 0; i < tracks.size; i += 100) {
+    promises.push(
+      fetchGeneric<SnapshotReference>(`https://api.spotify.com/v1/users/${userId}/playlists/${playlist}/tracks`,
+        null, { uris: tracksArr.slice(i, i + 100).map(t => `spotify:track:${t}`) })
+    )
+  }
+
+  return Promise.all(promises)
 }
 
 function getPlaylists(offset: number) {

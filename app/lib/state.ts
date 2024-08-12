@@ -6,6 +6,7 @@ import { unselectSmallPlaylists } from './playlists.ts'
 type PlaylistState = {
   genrePlaylists: GenrePlaylists
   setSelected: (genre: string, selected: boolean) => void
+  toggleSelected: (genre: string) => void
   checkAll: () => void
   uncheckAll: () => void
   unselectSmall: (lessThanNumTracks: number) => void
@@ -20,6 +21,13 @@ export const usePlaylistStore = create<PlaylistState>()(
         const playlist = state.genrePlaylists.get(genre)
         if (!playlist) throw new Error(`playlist ${genre} did not exist`)
         playlist.selected = selected
+      })
+    },
+    toggleSelected: (genre: string) => {
+      set((state) => {
+        const playlist = state.genrePlaylists.get(genre)
+        if (!playlist) throw new Error(`playlist ${genre} did not exist`)
+        playlist.selected = !playlist.selected
       })
     },
     checkAll: () => {
@@ -40,7 +48,7 @@ export const usePlaylistStore = create<PlaylistState>()(
       set((state) => {
         unselectSmallPlaylists(state.genrePlaylists, lessThanNumTracks)
       })
-    }
+    },
   })),
 )
 
