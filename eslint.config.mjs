@@ -138,13 +138,12 @@ const config = tseslint.config(
       parser: tseslint.parser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
-        project: './tsconfig.json',
+        projectService: true,
       },
     },
     rules: {
       ...importPlugin.configs.recommended.rules,
       ...importPlugin.configs.typescript.rules,
-      'import-x/namespace': 'off', // not supported by flat config format
       'import-x/extensions': ['error', 'always', { ignorePackages: true }],
     },
   },
