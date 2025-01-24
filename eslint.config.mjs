@@ -35,30 +35,17 @@ const stylisticCustomized = stylistic.configs.customize({
 const config = tseslint.config(
   { ignores: ['dist/*'] },
   eslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
   {
-    name: 'stylistic',
-    extends: [stylisticCustomized],
-    rules: {
-      '@stylistic/no-multiple-empty-lines': 'off',
-      '@stylistic/jsx-one-expression-per-line': 'off',
-      '@stylistic/jsx-closing-tag-location': 'off',
-      '@stylistic/padded-blocks': 'off',
-      '@stylistic/multiline-ternary': 'off',
-      '@stylistic/max-statements-per-line': ['error', { max: 2 }],
-      '@stylistic/operator-linebreak': 'off',
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
   {
-    extends: [
-      ...tseslint.configs.strictTypeChecked,
-      ...tseslint.configs.stylisticTypeChecked,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: './tsconfig.json',
-        // project: ['./tsconfig.json', './tsconfig.node.json'],
-      },
-    },
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
       '@typescript-eslint/restrict-template-expressions': [
@@ -75,6 +62,19 @@ const config = tseslint.config(
       '@typescript-eslint/no-shadow': ['error', { ignoreTypeValueShadow: false }],
       '@typescript-eslint/no-restricted-imports': ['error', { patterns: ['**/index*'] }],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    },
+  },
+  {
+    name: 'stylistic',
+    extends: [stylisticCustomized],
+    rules: {
+      '@stylistic/no-multiple-empty-lines': 'off',
+      '@stylistic/jsx-one-expression-per-line': 'off',
+      '@stylistic/jsx-closing-tag-location': 'off',
+      '@stylistic/padded-blocks': 'off',
+      '@stylistic/multiline-ternary': 'off',
+      '@stylistic/max-statements-per-line': ['error', { max: 2 }],
+      '@stylistic/operator-linebreak': 'off',
     },
   },
   {
