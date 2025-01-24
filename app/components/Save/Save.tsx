@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import DoneIcon from '@mui/icons-material/Done'
@@ -96,7 +96,7 @@ export default function Save() {
 
     const genrePlaylists = usePlaylistStore.getState().genrePlaylists
     void p.then(() => saveNewPlaylists(genrePlaylists))
-      .then(() => { navigate('../end', { relative: 'path' }) })
+      .then(() => navigate('../end', { relative: 'path' }))
 
     ranEffect = true
   }, [saving]) // eslint-disable-line react-hooks/exhaustive-deps

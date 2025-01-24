@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, type RouteObject } from 'react-router'
 import { grey } from '@mui/material/colors'
 import CssBaseline from '@mui/material/CssBaseline'
 import { PaletteOptions, ThemeProvider, createTheme } from '@mui/material/styles'
@@ -59,7 +59,7 @@ const theme = createTheme({
   },
 })
 
-const router = createBrowserRouter([
+const routes: RouteObject[] = [
   {
     path: import.meta.env.BASE_URL,
     element: <Layout />,
@@ -70,7 +70,8 @@ const router = createBrowserRouter([
       { path: 'end', element: <End /> },
     ],
   },
-])
+] satisfies RouteObject[]
+const router = createBrowserRouter(routes)
 
 export default function App() {
   return (

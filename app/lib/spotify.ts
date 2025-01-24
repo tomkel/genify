@@ -73,7 +73,6 @@ const fetchGeneric: FetchGeneric = <T extends ContentType>(url: string, qs?: Api
         }
         if (!(e instanceof Error)) return Promise.reject(new Error('unknown error'))
         return Promise.reject(e)
-      // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
       }).then(resolve).catch(reject), interval)
     )
 

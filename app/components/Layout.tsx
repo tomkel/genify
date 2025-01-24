@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router'
 import Button from '@mui/material/Button'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import red from '@mui/material/colors/red'

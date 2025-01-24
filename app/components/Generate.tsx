@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
+import { useLocation, useNavigate, useOutletContext } from 'react-router'
 import CircularProgress from '@mui/material/CircularProgress'
 import type { LayoutContext } from './Layout.tsx'
 import log from '@/lib/log.ts'
@@ -65,7 +65,7 @@ export default function Generate() {
     void tracksIntoPlaylists(genrePlaylists)
       .then((totalTracks) => {
         setTotalTracks(totalTracks)
-        navigate('../save', { relative: 'path' })
+        return navigate('../save', { relative: 'path' })
       })
 
     hasRun = true
