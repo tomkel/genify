@@ -12,14 +12,11 @@ import hooksPlugin from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import barrel from 'eslint-plugin-barrel-files'
 import importPlugin from 'eslint-plugin-import-x'
-import { fixupPluginRules } from '@eslint/compat'
 
 // https://github.com/facebook/react/issues/28313
-const hooksFlat = /** @type {const} */({
+const hooksFlat = /** @type {const} */ ({
   plugins: {
-    'react-hooks': {
-      rules: fixupPluginRules(hooksPlugin).rules,
-    },
+    'react-hooks': hooksPlugin,
   },
   rules: {
     'react-hooks/rules-of-hooks': 'error',
