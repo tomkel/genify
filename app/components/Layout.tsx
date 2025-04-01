@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router'
 import Button from '@mui/material/Button'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
-import red from '@mui/material/colors/red'
+import { red } from '@mui/material/colors'
 import { useTheme, type Theme } from '@mui/material/styles'
 import type { Styles } from './Styles.ts'
 

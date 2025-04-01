@@ -8,21 +8,10 @@ import stylistic from '@stylistic/eslint-plugin'
 import tseslint from 'typescript-eslint'
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js'
 import reactJsxRuntime from 'eslint-plugin-react/configs/jsx-runtime.js'
-import hooksPlugin from 'eslint-plugin-react-hooks'
+import * as hooksPlugin from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import barrel from 'eslint-plugin-barrel-files'
 import importPlugin from 'eslint-plugin-import-x'
-
-// https://github.com/facebook/react/issues/28313
-const hooksFlat = /** @type {const} */ ({
-  plugins: {
-    'react-hooks': hooksPlugin,
-  },
-  rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
-  },
-})
 
 // https://github.com/eslint-stylistic/eslint-stylistic/blob/main/packages/eslint-plugin/configs/customize.ts
 const stylisticCustomized = stylistic.configs.customize({
@@ -38,6 +27,7 @@ const config = tseslint.config(
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
   {
+    name: 'typescript-eslint/setup',
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -46,6 +36,7 @@ const config = tseslint.config(
     },
   },
   {
+    name: 'typescript-eslint/custom',
     rules: {
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
       '@typescript-eslint/restrict-template-expressions': [
@@ -87,7 +78,7 @@ const config = tseslint.config(
       },
     },
   },
-  hooksFlat,
+  hooksPlugin.configs['recommended-latest'],
   {
     plugins: { 'react-refresh': reactRefresh },
     rules: {
