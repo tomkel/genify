@@ -2,6 +2,8 @@ import Button from '@mui/material/Button'
 import { useOutletContext } from 'react-router'
 import type { LayoutContext } from './Layout'
 import type { Styles } from './Styles.ts'
+import { getAuthURL } from '@/lib/auth/implicit.ts'
+// import { getAuthURL } from '@/lib/auth/pkce.ts'
 
 const styles = {
   container: {
@@ -18,25 +20,9 @@ const styles = {
 } satisfies Styles
 
 
-function getAuthURL() {
-  const authURL = 'https://accounts.spotify.com/authorize'
-  const redirectOrigin = import.meta.env.PROD
-    ? 'https://tkel.ly/genify'
-    : 'http://localhost:5173'
-  const redirectUrl = redirectOrigin + '/generate'
-
-  // https://developer.spotify.com/documentation/web-api/tutorials/implicit-flow
-  const authParams = new URLSearchParams({
-    client_id: '38dfce7a65f84684b6678907870b0cec',
-    response_type: 'token',
-    redirect_uri: redirectUrl.toString(),
-    scope: 'playlist-modify-public user-library-read',
-  })
-  return `${authURL}?${authParams.toString()}`
-}
-
 const authRedirect = () => {
-  document.location.assign(getAuthURL())
+  void getAuthURL()
+    .then((url) => { document.location.assign(url) })
 }
 
 export default function AuthButton() {
