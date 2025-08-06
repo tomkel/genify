@@ -15,7 +15,7 @@ import importPlugin from 'eslint-plugin-import-x'
 
 // https://github.com/eslint-stylistic/eslint-stylistic/blob/main/packages/eslint-plugin/configs/customize.ts
 const stylisticCustomized = stylistic.configs.customize({
-  flat: true,
+  indent: 2,
   quoteProps: 'as-needed',
   braceStyle: '1tbs',
   commaDangle: 'only-multiline',
